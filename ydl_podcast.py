@@ -40,7 +40,6 @@ def download(config, sub):
             'preferredcodec': 'best',
             'preferredquality': '5',
             'nopostoverwrites': False}]
-    print(options)
     with youtube_dl.YoutubeDL(options) as ydl:
         try:
             ydl.download([sub['url']])
@@ -72,7 +71,6 @@ def write_xml(config, sub):
         fpath = os.path.join(directory, f)
         mtime = date.fromtimestamp(os.path.getmtime(fpath))\
                     .strftime("%a, %d %b %Y %H:%M:%S +0000")
-        print(mtime)
         if os.path.isfile(fpath) and not f.startswith('.'):
             xml += """
             <item>
