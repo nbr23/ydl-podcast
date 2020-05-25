@@ -8,6 +8,11 @@ import youtube_dl
 from youtube_dl.utils import DateRange
 from collections import ChainMap
 
+sub_defaults = {
+        'retention_days': None,
+        'audio_only': False
+        }
+
 def load_config(config_path):
     config = None
     if not os.path.isfile(config_path):
@@ -15,24 +20,33 @@ def load_config(config_path):
         return None
     with open(config_path) as configfile:
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
-    return config
+    return config if 'output_dir' in config and 'url_root' in config else None
 
-def download(config, subscription):
+def download(config, sub):
     options = {
             'outtmpl': os.path.join(config['output_dir'],
-                                       subscription['name'],
+                                       sub['name'],
                                        '%(title)s [%(id)s].%(ext)s'),
-            'daterange': DateRange((date.today() - \
-                    timedelta(days=subscription['retention_days']))
-                    .strftime('%Y%m%d'), '99991231')}
-    if subscription['audio_only']:
+            }
+    if sub['retention_days'] is not None and not sub['initialize']:
+        options['daterange'] = DateRange((date.today() - \
+                    timedelta(days=sub['retention_days']))
+                    .strftime('%Y%m%d'), '99991231')
+    if sub['download_last'] is not None and not sub['initialize']:
+        options['max_downloads'] = sub['download_last']
+    if sub['audio_only']:
         options['format'] = 'bestaudio/best'
         options['postprocessors'] = [{'key': 'FFmpegExtractAudio',
             'preferredcodec': 'best',
             'preferredquality': '5',
             'nopostoverwrites': False}]
+    print(options)
     with youtube_dl.YoutubeDL(options) as ydl:
-        ydl.download([subscription['url']])
+        try:
+            ydl.download([sub['url']])
+        except youtube_dl.utils.MaxDownloadsReached:
+            pass
+
 
 def cleanup(config, sub):
     directory = os.path.join(config['output_dir'], sub['name'])
@@ -76,15 +90,10 @@ def write_xml(config, sub):
     with open("%s.xml" % os.path.join(config['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
 
-sub_defaults = {
-        'retention_days': None,
-        'audio_only': False
-        }
-
 def main(argv):
     config = load_config(argv[1] if len(argv) > 1 else 'config.yaml')
     if not config:
-        print("Configuration file not found.")
+        print("No valid configuration found.")
         return -1
 
     for sub in config['subscriptions']:
@@ -93,9 +102,15 @@ def main(argv):
             continue
 
         sub = ChainMap(sub, sub_defaults)
+        if os.path.isdir(os.path.join(config['output_dir'], sub['name'])) \
+                and sub['initialize']:
+            sub['initialize'] = False
+
         download(config, sub)
-        if sub['retention_days'] is not None:
+
+        if sub['retention_days'] is not None and not sub['initialize']:
             cleanup(config, sub)
+
         write_xml(config, sub)
 
 if __name__ == "__main__":
