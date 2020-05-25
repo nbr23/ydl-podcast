@@ -1,0 +1,16 @@
+subscriptions:
+  - name: MyPodcast
+    url: https://youtube.com
+    retention_days: 14 # How old is the oldest video to download and keep locally
+    initialize: True # Download the whole channel on first run
+    download_last: 1 # Only download the last video at each run
+    audio_only: True # Extract and keep audio only
+  - name: MyPodcast2
+    url: https://youtube.com
+    retention_days: 14 # How old is the oldest video to download and keep locally
+    initialize: True # Download the whole channel on first run
+    download_last: 1 # Only download the last video at each run
+    audio_only: True # Extract and keep audio only
+
+output_dir: /var/www/html/podcast/
+url_root: https:///podcast.example.com/
