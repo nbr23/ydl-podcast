@@ -34,6 +34,8 @@ def download(config, sub):
                     .strftime('%Y%m%d'), '99991231')
     if sub['download_last'] is not None and not sub['initialize']:
         options['max_downloads'] = sub['download_last']
+    if sub['initialize']:
+        options['playlistreverse'] = True
     if sub['audio_only']:
         options['format'] = 'bestaudio/best'
         options['postprocessors'] = [{'key': 'FFmpegExtractAudio',
