@@ -1,7 +1,8 @@
 # ydl-podcast
 
 A simple tool to generate Podcast like RSS feeds from youtube (or other
-youtube-dl supported services) channels.
+youtube-dl supported services) channels, using
+[`youtube-dl`](https://github.com/rg3/youtube-dl).
 
 ## Setup
 
