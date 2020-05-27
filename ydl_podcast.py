@@ -2,7 +2,11 @@
 import sys
 import os
 import re
+import glob
 import yaml
+import html
+from urllib.parse import quote
+import json
 import datetime
 from datetime import date, timedelta
 import youtube_dl
@@ -32,11 +36,32 @@ def get_episode_info(filename):
                                 .strftime("%a, %d %b %Y %H:%M:%S +0000"),
             'extension': ext}
 
+def metadata_parse(metadata_path):
+    with open(metadata_path) as metadata:
+        mdjs = json.load(metadata)
+        basename = '.'.join(os.path.basename(metadata_path).split('.')[:-2])
+        thumbnail_file = '%s.%s' % (basename, mdjs['thumbnail'].split('.')[-1])
+        extension = mdjs['acodec'] if 'audio only' in mdjs['format'] \
+                    else mdjs['ext']
+        return {'title': mdjs['title'],
+                'id': mdjs['id'],
+                'pub_date': datetime.datetime.strptime(mdjs['upload_date'],
+                                                       '%Y%m%d')
+                                    .strftime("%a, %d %b %Y %H:%M:%S +0000"),
+                'extension': extension,
+                'description': mdjs['description'],
+                'thumbnail': thumbnail_file,
+                'filename': '%s.%s' % (basename, extension),
+                'duration': str(datetime.timedelta(seconds=mdjs['duration']))
+                }
+
 def download(config, sub):
     options = {
             'outtmpl': os.path.join(config['output_dir'],
                                        sub['name'],
                                        '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
+            'writeinfojson': True,
+            'writethumbnail': True,
             }
     if sub['retention_days'] is not None and not sub['initialize']:
         options['daterange'] = DateRange((date.today() - \
@@ -71,7 +96,7 @@ def cleanup(config, sub):
 def write_xml(config, sub):
     directory = os.path.join(config['output_dir'], sub['name'])
     xml = """<?xml version="1.0"?>
-            <rss version="2.0">
+            <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
             <updated>%s</updated>
             <title>%s</title>
@@ -79,23 +104,29 @@ def write_xml(config, sub):
                     % (datetime.datetime.now(),
                        sub['name'],
                        '/'.join([config['url_root'], "%s.xml" % sub['name']]))
-    for f in os.listdir(directory):
-        fpath = os.path.join(directory, f)
-        if os.path.isfile(fpath) and not f.startswith('.'):
-            ep_info = get_episode_info(f)
-            xml += """
+
+    for md_file in glob.glob(os.path.join(config['output_dir'],
+                                           '%s/*.info.json' % sub['name'])):
+        md = metadata_parse(md_file)
+        xml += """
             <item>
             <id>%s</id>
             <title>%s</title>
             <enclosure url="%s" type="%s"/>
             <pubDate>%s</pubDate>
+            <itunes:image href="%s"/>
+            <itunes:summary><![CDATA[%s]]></itunes:summary>
+            <itunes:duration>%s</itunes:duration>
             </item>
-            """ % (ep_info['id'],
-                   ep_info['title'],
-                   '/'.join([config['url_root'], sub['name'], f]),
-                   ('audio/%s' % ep_info['extension']) if sub['audio_only'] \
-                           else 'video/%s' % ep_info['extension'],
-                    ep_info['pub_date'])
+            """ % (html.escape(md['id']),
+                   html.escape(md['title']),
+                   '/'.join([config['url_root'], quote(sub['name']), quote(md['filename'])]),
+                   ('audio/%s' % md['extension']) if sub['audio_only'] \
+                           else 'video/%s' % md['extension'],
+                    md['pub_date'],
+                    '/'.join([config['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
+                    md['description'],
+                    md['duration'])
     xml += '</channel></rss>'
     with open("%s.xml" % os.path.join(config['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
