@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 import sys
 import os
-import re
 import glob
 import yaml
 import html
@@ -26,15 +25,6 @@ def load_config(config_path):
     with open(config_path) as configfile:
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
     return config if 'output_dir' in config and 'url_root' in config else None
-
-def get_episode_info(filename):
-    title, id, date, ext = re.match(r'^(.*) \[([^]]*)\]\[([^]]*)\]\.(.+)$',
-            filename).groups()
-    return {'title': title,
-            'id': id,
-            'pub_date': datetime.datetime.strptime(date, '%Y%m%d')
-                                .strftime("%a, %d %b %Y %H:%M:%S +0000"),
-            'extension': ext}
 
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
