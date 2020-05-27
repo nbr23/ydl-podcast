@@ -43,3 +43,16 @@ The available settings are the following.
 Using cron or your favorite scheduler, run:
 
 `./ydl_podcast.py [configfile.yaml]`
+
+You can then use your favorite web server to serve the files (a good idea is to
+exclude the `*.json` and `*.part` files from being served as the first might
+leak information, and the second is unnecessary.
+
+eg with nginx:
+
+```
+root /var/www/static/podcasts/;
+location ~ (\.json$|\.part$) {
+  return 403;
+}
+```
