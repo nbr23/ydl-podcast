@@ -14,7 +14,9 @@ from collections import ChainMap
 
 sub_defaults = {
         'retention_days': None,
-        'audio_only': False
+        'audio_only': False,
+        'download_last': None,
+        'initialize': False
         }
 
 def load_config(config_path):
