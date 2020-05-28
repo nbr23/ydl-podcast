@@ -32,9 +32,19 @@ def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
         mdjs = json.load(metadata)
         basename = '.'.join(os.path.basename(metadata_path).split('.')[:-2])
-        thumbnail_file = '%s.%s' % (basename, mdjs['thumbnail'].split('.')[-1])
+        path = os.path.dirname(metadata_path)
+        thumb_ext = mdjs['thumbnail'].split('.')[-1]
+        thumbnail_file = '%s.%s' % (basename, thumb_ext)
         extension = mdjs['acodec'] if 'audio only' in mdjs['format'] \
                     else mdjs['ext']
+        if not os.path.isfile(os.path.join(path,
+                                           '%s.%s' % (basename, extension))):
+            with os.scandir(path) as directory:
+                for f in directory:
+                    ext = f.name.split('.')[-1]
+                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json']:
+                        extension = ext
+                        break
         return {'title': mdjs['title'],
                 'id': mdjs['id'],
                 'pub_date': datetime.datetime.strptime(mdjs['upload_date'],
