@@ -26,7 +26,7 @@ def load_config(config_path):
         return None
     with open(config_path) as configfile:
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
-    return config if 'output_dir' in config and 'url_root' in config else None
+    return config
 
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
@@ -57,9 +57,9 @@ def metadata_parse(metadata_path):
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
 
-def download(config, sub):
+def download(sub):
     options = {
-            'outtmpl': os.path.join(config['output_dir'],
+            'outtmpl': os.path.join(sub['output_dir'],
                                        sub['name'],
                                        '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
             'writeinfojson': True,
@@ -86,8 +86,8 @@ def download(config, sub):
             pass
 
 
-def cleanup(config, sub):
-    directory = os.path.join(config['output_dir'], sub['name'])
+def cleanup(sub):
+    directory = os.path.join(sub['output_dir'], sub['name'])
     for f in os.listdir(directory):
         fpath = os.path.join(directory, f)
         mtime = date.fromtimestamp(os.path.getmtime(fpath))
@@ -95,8 +95,8 @@ def cleanup(config, sub):
         if mtime < ret:
             os.remove(fpath)
 
-def write_xml(config, sub):
-    directory = os.path.join(config['output_dir'], sub['name'])
+def write_xml(sub):
+    directory = os.path.join(sub['output_dir'], sub['name'])
     xml = """<?xml version="1.0"?>
             <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -105,9 +105,9 @@ def write_xml(config, sub):
             <link href="%s" rel="self" type="application/rss+xml"/>""" \
                     % (datetime.datetime.now(),
                        sub['name'],
-                       '/'.join([config['url_root'], "%s.xml" % sub['name']]))
+                       '/'.join([sub['url_root'], "%s.xml" % sub['name']]))
 
-    for md_file in glob.glob(os.path.join(config['output_dir'],
+    for md_file in glob.glob(os.path.join(sub['output_dir'],
                                            '%s/*.info.json' % sub['name'])):
         md = metadata_parse(md_file)
         xml += """
@@ -122,15 +122,15 @@ def write_xml(config, sub):
             </item>
             """ % (html.escape(md['id']),
                    html.escape(md['title']),
-                   '/'.join([config['url_root'], quote(sub['name']), quote(md['filename'])]),
+                   '/'.join([sub['url_root'], quote(sub['name']), quote(md['filename'])]),
                    ('audio/%s' % md['extension']) if sub['audio_only'] \
                            else 'video/%s' % md['extension'],
                     md['pub_date'],
-                    '/'.join([config['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
+                    '/'.join([sub['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
                     md['description'],
                     md['duration'])
     xml += '</channel></rss>'
-    with open("%s.xml" % os.path.join(config['output_dir'], sub['name']), "w")  as fout:
+    with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
 
 def main(argv):
@@ -140,21 +140,22 @@ def main(argv):
         return -1
 
     for sub in config['subscriptions']:
-        if 'name' not in sub or 'url' not in sub:
+        sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root']}, sub_defaults)
+        if 'name' not in sub or 'url' not in sub or 'output_dir' not in sub \
+                or 'url_root' not in sub:
             print("Skipping erroneous subscription")
             continue
 
-        sub = ChainMap(sub, sub_defaults)
-        if os.path.isdir(os.path.join(config['output_dir'], sub['name'])) \
+        if os.path.isdir(os.path.join(sub['output_dir'], sub['name'])) \
                 and sub['initialize']:
             sub['initialize'] = False
 
-        download(config, sub)
+        download(sub)
 
         if sub['retention_days'] is not None and not sub['initialize']:
-            cleanup(config, sub)
+            cleanup(sub)
 
-        write_xml(config, sub)
+        write_xml(sub)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
