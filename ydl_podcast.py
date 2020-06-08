@@ -149,7 +149,7 @@ def main(argv):
         return -1
 
     for sub in config['subscriptions']:
-        sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root', 'best']}, sub_defaults)
+        sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root', 'best', 'format']}, sub_defaults)
         if 'name' not in sub or 'url' not in sub or 'output_dir' not in sub \
                 or 'url_root' not in sub:
             print("Skipping erroneous subscription")

@@ -46,6 +46,7 @@ The available settings are the following.
   to point to the media files.
 - `format`: file format to force youtube-dl to use (eg mp4, webm, mp3 for audio
   only…)
+- `best`: force best quality (only useful when specifying a format).
 
 ## Usage
 
