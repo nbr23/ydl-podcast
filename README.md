@@ -47,6 +47,8 @@ The available settings are the following.
 - `format`: file format to force youtube-dl to use (eg mp4, webm, mp3 for audio
   only…)
 - `best`: force best quality (only useful when specifying a format).
+- `ydl_options`: list of raw youtube-dl options to use. For experienced users,
+  since this will likely yield issues if not understood.
 
 ## Usage
 

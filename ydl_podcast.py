@@ -88,6 +88,10 @@ def download(sub):
         else:
             options['format'] = sub['format']
 
+    if 'ydl_options' in sub:
+        for key in sub['ydl_options']:
+            options[key] = sub['ydl_options'][key]
+
     with youtube_dl.YoutubeDL(options) as ydl:
         try:
             ydl.download([sub['url']])
@@ -150,6 +154,14 @@ def main(argv):
 
     for sub in config['subscriptions']:
         sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root', 'best', 'format']}, sub_defaults)
+        if 'ydl_options' in sub and sub['ydl_options'] is not None\
+                and 'ydl_options' in config \
+                and config['ydl_options'] is not None:
+            sub['ydl_options'] = {**config['ydl_options'], **sub['ydl_options']}
+        elif 'ydl_options' in config and config['ydl_options'] is not None:
+            sub['ydl_options'] = config['ydl_options']
+        elif 'ydl_options' in sub and sub['ydl_options'] is None:
+            sub['ydl_options'] = {}
         if 'name' not in sub or 'url' not in sub or 'output_dir' not in sub \
                 or 'url_root' not in sub:
             print("Skipping erroneous subscription")
