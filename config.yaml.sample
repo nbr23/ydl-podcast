@@ -11,6 +11,7 @@ subscriptions:
     initialize: True # Download the whole channel on first run
     download_last: 1 # Only download the last video at each run
     audio_only: True # Extract and keep audio only
+    format: mp3      # Force end format
 
 output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/

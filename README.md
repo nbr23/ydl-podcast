@@ -44,6 +44,8 @@ The available settings are the following.
   the podcast xml files generated.
 - `url_root`: root url for the static files (used in the generation of the XML
   to point to the media files.
+- `format`: file format to force youtube-dl to use (eg mp4, webm, mp3 for audio
+  only…)
 
 ## Usage
 
