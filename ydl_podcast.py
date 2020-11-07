@@ -17,7 +17,8 @@ sub_defaults = {
         'audio_only': False,
         'download_last': None,
         'initialize': False,
-        'best': False
+        'best': False,
+        'ignore_errors': False,
         }
 
 def load_config(config_path):
@@ -65,6 +66,7 @@ def download(sub):
                                        '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
             'writeinfojson': True,
             'writethumbnail': True,
+            'ignoreerrors': sub['ignore_errors'],
             }
     if sub['retention_days'] is not None and not sub['initialize']:
         options['daterange'] = DateRange((date.today() - \
