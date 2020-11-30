@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 import sys
 import os
+import io
 import glob
 import yaml
 import html
@@ -94,12 +95,36 @@ def download(sub):
         for key in sub['ydl_options']:
             options[key] = sub['ydl_options'][key]
 
+    # Get playlist metadata
+    options.update({'quiet': True, 'simulate': True, 'forcejson': True})
+    output = io.StringIO()
     with youtube_dl.YoutubeDL(options) as ydl:
         try:
+            ydl._screen_file = output
             ydl.download([sub['url']])
         except youtube_dl.utils.MaxDownloadsReached:
             pass
 
+    metadata = [json.loads(entry) for entry in
+            ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
+
+    options.pop('simulate')
+    options.pop('quiet')
+    options.pop('forcejson')
+
+    for entry in metadata:
+        mdfile_name = os.path.join(sub['output_dir'], sub['name'],
+                '.{}.{}.meta'.format(entry.get('id'), entry.get('title')))
+        if not os.path.isfile(mdfile_name):
+            with youtube_dl.YoutubeDL(options) as ydl:
+                try:
+                    ydl.download([entry['webpage_url']])
+                except youtube_dl.utils.MaxDownloadsReached:
+                    pass
+                with open(mdfile_name, 'w+') as f:
+                    pass
+        else:
+            print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
 
 def cleanup(sub):
     directory = os.path.join(sub['output_dir'], sub['name'])
