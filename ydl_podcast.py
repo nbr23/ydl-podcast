@@ -115,7 +115,7 @@ def download(sub):
     for entry in metadata:
         mdfile_name = os.path.join(sub['output_dir'], sub['name'],
                 '.{}.{}.meta'.format(entry.get('id'), entry.get('title')))
-        if not os.path.isfile(mdfile_name):
+        if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
             with youtube_dl.YoutubeDL(options) as ydl:
                 try:
                     ydl.download([entry['webpage_url']])
@@ -123,6 +123,8 @@ def download(sub):
                     pass
                 with open(mdfile_name, 'w+') as f:
                     pass
+        elif entry.get('is_live', False):
+            print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
         else:
             print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
 
