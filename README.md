@@ -1,14 +1,14 @@
 # ydl-podcast
 
-A simple tool to generate Podcast like RSS feeds from youtube (or other
+A simple tool to generate Podcast-like RSS feeds from youtube (or other
 youtube-dl supported services) channels, using
 [`youtube-dl`](https://github.com/rg3/youtube-dl).
 
 ## Setup
 
-Install the requirements:
+Install package with requirements:
 
-`pip install -r requirements.txt`
+`pip install git+https://github.com/nbr23/ydl-podcast.git`
 
 ## Configuration
 
@@ -54,7 +54,7 @@ The available settings are the following.
 
 Using cron or your favorite scheduler, run:
 
-`./ydl_podcast.py [configfile.yaml]`
+`ydl_podcast [configfile.yaml]`
 
 You can then use your favorite web server to serve the files (a good idea is to
 exclude the `*.json` and `*.part` files from being served as the first might

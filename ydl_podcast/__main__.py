@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+
 import sys
 import os
 import io
@@ -175,7 +176,8 @@ def write_xml(sub):
     with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
 
-def main(argv):
+def main():
+    argv = sys.argv
     config = load_config(argv[1] if len(argv) > 1 else 'config.yaml')
     if not config:
         print("No valid configuration found.")
@@ -208,4 +210,4 @@ def main(argv):
         write_xml(sub)
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main())
