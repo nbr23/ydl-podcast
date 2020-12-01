@@ -17,6 +17,7 @@ sub_defaults = {
         'initialize': False,
         'best': False,
         'ignore_errors': False,
+        'quiet': False,
         }
 
 def load_config(config_path):
@@ -97,6 +98,8 @@ def download(sub):
     with youtube_dl.YoutubeDL(options) as ydl:
         try:
             ydl._screen_file = output
+            if sub['quiet']:
+                ydl._err_file = io.StringIO()
             ydl.download([sub['url']])
         except youtube_dl.utils.MaxDownloadsReached:
             pass
@@ -113,15 +116,18 @@ def download(sub):
                 '.{}.{}.meta'.format(entry.get('id'), entry.get('title')))
         if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
             with youtube_dl.YoutubeDL(options) as ydl:
+                if sub['quiet']:
+                    ydl._screen_file = io.StringIO()
+                    ydl._err_file = ydl._screen_file
                 try:
                     ydl.download([entry['webpage_url']])
                 except youtube_dl.utils.MaxDownloadsReached:
                     pass
                 with open(mdfile_name, 'w+') as f:
                     pass
-        elif entry.get('is_live', False):
+        elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
-        else:
+        elif not sub['quiet']:
             print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
 
 def cleanup(sub):
