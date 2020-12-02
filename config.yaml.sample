@@ -5,13 +5,14 @@ subscriptions:
     initialize: True # Download the whole channel on first run
     download_last: 1 # Only download the last video at each run
     audio_only: True # Extract and keep audio only
+    format: mp3      # Force end format
   - name: MyPodcast2
     url: https://youtube.com
     retention_days: 14 # How old is the oldest video to download and keep locally
     initialize: True # Download the whole channel on first run
     download_last: 1 # Only download the last video at each run
-    audio_only: True # Extract and keep audio only
-    format: mp3      # Force end format
+    ydl_options: # Add custom youtube-dl options
+      writesubtitles: True # Write subtitle file
 
 output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/
