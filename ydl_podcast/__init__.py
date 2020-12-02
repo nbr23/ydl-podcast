@@ -20,6 +20,7 @@ sub_defaults = {
         'quiet': False,
         }
 
+
 def load_config(config_path):
     config = None
     if not os.path.isfile(config_path):
@@ -28,6 +29,7 @@ def load_config(config_path):
     with open(config_path) as configfile:
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
     return config
+
 
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
@@ -58,6 +60,7 @@ def metadata_parse(metadata_path):
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
 
+
 def get_playlist_metadata(sub, options):
     options.update({'quiet': True, 'simulate': True, 'forcejson': True})
     output = io.StringIO()
@@ -78,25 +81,27 @@ def get_playlist_metadata(sub, options):
     options.pop('forcejson')
     return metadata
 
+
 def download(sub):
+    downloaded = []
     options = {
             'outtmpl': os.path.join(sub['output_dir'],
-                                       sub['name'],
-                                       '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
+                sub['name'],
+                '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
             'writeinfojson': True,
             'writethumbnail': True,
             'ignoreerrors': sub['ignore_errors'],
             }
     if sub['retention_days'] is not None and not sub['initialize']:
-        options['daterange'] = DateRange((date.today() - \
-                    timedelta(days=sub['retention_days']))
-                    .strftime('%Y%m%d'), '99991231')
+        options['daterange'] = DateRange((date.today()
+            - timedelta(days=sub['retention_days']))
+            .strftime('%Y%m%d'), '99991231')
     if sub['download_last'] is not None and not sub['initialize']:
         options['max_downloads'] = sub['download_last']
     if sub['initialize']:
         options['playlistreverse'] = True
     if sub['audio_only']:
-        options['format'] = 'bestaudio/%s' % ('best' if 'format' not in sub \
+        options['format'] = 'bestaudio/%s' % ('best' if 'format' not in sub
                                                      else sub['format'])
         options['postprocessors'] = [{'key': 'FFmpegExtractAudio',
             'preferredcodec': 'best' if 'format' not in sub
@@ -128,11 +133,14 @@ def download(sub):
                 except youtube_dl.utils.MaxDownloadsReached:
                     pass
                 with open(mdfile_name, 'w+') as f:
-                    pass
+                    entry.update({'subscription_name': sub['name']})
+                    downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
         elif not sub['quiet']:
             print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
+    return downloaded
+
 
 def cleanup(sub):
     directory = os.path.join(sub['output_dir'], sub['name'])
@@ -142,6 +150,7 @@ def cleanup(sub):
         ret = date.today() - timedelta(days=sub['retention_days'])
         if mtime < ret:
             os.remove(fpath)
+
 
 def write_xml(sub):
     directory = os.path.join(sub['output_dir'], sub['name'])
@@ -180,5 +189,3 @@ def write_xml(sub):
     xml += '</channel></rss>'
     with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
-
-
