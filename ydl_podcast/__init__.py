@@ -133,7 +133,11 @@ def download(sub):
                 except youtube_dl.utils.MaxDownloadsReached:
                     pass
                 with open(mdfile_name, 'w+') as f:
-                    entry.update({'subscription_name': sub['name']})
+                    entry.update({
+                        'subscription_name': sub['name'],
+                        'formats': [fmt for fmt in entry.get('formats')
+                            if fmt.get('format') == options['format']]
+                        })
                     downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
