@@ -82,10 +82,10 @@ def get_playlist_metadata(sub, options):
     return metadata
 
 
-def download(sub):
-    downloaded = []
+def process_options(sub):
     options = {
-            'outtmpl': os.path.join(sub['output_dir'],
+            'outtmpl': os.path.join(
+                sub['output_dir'],
                 sub['name'],
                 '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
             'writeinfojson': True,
@@ -93,31 +93,36 @@ def download(sub):
             'ignoreerrors': sub['ignore_errors'],
             }
     if sub['retention_days'] is not None and not sub['initialize']:
-        options['daterange'] = DateRange((date.today()
-            - timedelta(days=sub['retention_days']))
-            .strftime('%Y%m%d'), '99991231')
+        options['daterange'] = DateRange(
+                (date.today() - timedelta(days=sub['retention_days']))
+                .strftime('%Y%m%d'), '99991231')
     if sub['download_last'] is not None and not sub['initialize']:
         options['max_downloads'] = sub['download_last']
     if sub['initialize']:
         options['playlistreverse'] = True
     if sub['audio_only']:
-        options['format'] = 'bestaudio/%s' % ('best' if 'format' not in sub
-                                                     else sub['format'])
-        options['postprocessors'] = [{'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'best' if 'format' not in sub
-                                     else sub['format'],
+        options['format'] = 'bestaudio/%s' % sub.get('format', 'best')
+        options['postprocessors'] = [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': sub.get('format', 'best'),
             'preferredquality': '5',
-            'nopostoverwrites': False}]
+            'nopostoverwrites': False
+            }]
     elif 'format' in sub:
         if sub['best']:
             options['format'] = 'bestvideo[ext=%s]' % sub['format']
         else:
             options['format'] = sub['format']
 
-    if 'ydl_options' in sub:
-        for key in sub['ydl_options']:
-            options[key] = sub['ydl_options'][key]
+    for key in sub.get('ydl_options', {}):
+        options[key] = sub['ydl_options'][key]
 
+    return options
+
+
+def download(sub):
+    downloaded = []
+    options = process_options(sub)
     metadata = get_playlist_metadata(sub, options)
 
     for entry in metadata:
