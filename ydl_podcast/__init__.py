@@ -57,6 +57,27 @@ def metadata_parse(metadata_path):
                 'filename': '%s.%s' % (basename, extension),
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
+
+def get_playlist_metadata(sub, options):
+    options.update({'quiet': True, 'simulate': True, 'forcejson': True})
+    output = io.StringIO()
+    with youtube_dl.YoutubeDL(options) as ydl:
+        try:
+            ydl._screen_file = output
+            if sub['quiet']:
+                ydl._err_file = io.StringIO()
+            ydl.download([sub['url']])
+        except youtube_dl.utils.MaxDownloadsReached:
+            pass
+
+    metadata = [json.loads(entry) for entry in
+            ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
+
+    options.pop('simulate')
+    options.pop('quiet')
+    options.pop('forcejson')
+    return metadata
+
 def download(sub):
     options = {
             'outtmpl': os.path.join(sub['output_dir'],
@@ -92,24 +113,7 @@ def download(sub):
         for key in sub['ydl_options']:
             options[key] = sub['ydl_options'][key]
 
-    # Get playlist metadata
-    options.update({'quiet': True, 'simulate': True, 'forcejson': True})
-    output = io.StringIO()
-    with youtube_dl.YoutubeDL(options) as ydl:
-        try:
-            ydl._screen_file = output
-            if sub['quiet']:
-                ydl._err_file = io.StringIO()
-            ydl.download([sub['url']])
-        except youtube_dl.utils.MaxDownloadsReached:
-            pass
-
-    metadata = [json.loads(entry) for entry in
-            ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
-
-    options.pop('simulate')
-    options.pop('quiet')
-    options.pop('forcejson')
+    metadata = get_playlist_metadata(sub, options)
 
     for entry in metadata:
         mdfile_name = os.path.join(sub['output_dir'], sub['name'],
