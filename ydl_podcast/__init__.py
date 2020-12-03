@@ -70,8 +70,9 @@ def get_playlist_metadata(sub, options):
             if sub['quiet']:
                 ydl._err_file = io.StringIO()
             ydl.download([sub['url']])
-        except youtube_dl.utils.MaxDownloadsReached:
-            pass
+        except youtube_dl.utils.YoutubeDLError as e:
+            if not sub['quiet']:
+                print(e)
 
     metadata = [json.loads(entry) for entry in
             ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
@@ -135,8 +136,9 @@ def download(sub):
                     ydl._err_file = ydl._screen_file
                 try:
                     ydl.download([entry['webpage_url']])
-                except youtube_dl.utils.MaxDownloadsReached:
-                    pass
+                except youtube_dl.utils.YoutubeDLError as e:
+                    if not sub['quiet']:
+                        print(e)
                 with open(mdfile_name, 'w+') as f:
                     entry.update({
                         'subscription_name': sub['name'],
