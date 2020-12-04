@@ -154,6 +154,7 @@ def download(sub):
 
 
 def cleanup(sub):
+    deleted = []
     directory = os.path.join(sub['output_dir'], sub['name'])
     for f in os.listdir(directory):
         fpath = os.path.join(directory, f)
@@ -161,6 +162,8 @@ def cleanup(sub):
         ret = date.today() - timedelta(days=sub['retention_days'])
         if mtime < ret:
             os.remove(fpath)
+            deleted.append(fpath)
+    return deleted
 
 
 def write_xml(sub):
