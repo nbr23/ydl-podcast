@@ -62,7 +62,8 @@ def metadata_parse(metadata_path):
 
 
 def get_playlist_metadata(sub, options):
-    options.update({'quiet': True, 'simulate': True, 'forcejson': True})
+    options = options.copy()
+    options.update({'quiet': True, 'simulate': True, 'forcejson': True, 'ignoreerrors': True})
     output = io.StringIO()
     with youtube_dl.YoutubeDL(options) as ydl:
         try:
@@ -76,10 +77,6 @@ def get_playlist_metadata(sub, options):
 
     metadata = [json.loads(entry) for entry in
             ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
-
-    options.pop('simulate')
-    options.pop('quiet')
-    options.pop('forcejson')
     return metadata
 
 
@@ -143,7 +140,8 @@ def download(sub):
                     entry.update({
                         'subscription_name': sub['name'],
                         'formats': [fmt for fmt in entry.get('formats')
-                            if fmt.get('format') == options['format']]
+                            if (options.get('format') is None
+                                or (fmt.get('format') == options.get('format')))]
                         })
                     downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
