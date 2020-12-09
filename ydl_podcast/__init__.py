@@ -30,6 +30,13 @@ def load_config(config_path):
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
     return config
 
+def metadata_file_extension(metadata, data_path, basename):
+    if ('audio only' in metadata['format'] and
+            os.path.isfile(os.path.join(
+                data_path,
+                '%s.%s' % (basename, metadata['acodec'])))):
+        return metadata['acodec']
+    return metadata['ext']
 
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
@@ -38,8 +45,7 @@ def metadata_parse(metadata_path):
         path = os.path.dirname(metadata_path)
         thumb_ext = mdjs['thumbnail'].split('.')[-1]
         thumbnail_file = '%s.%s' % (basename, thumb_ext)
-        extension = mdjs['acodec'] if 'audio only' in mdjs['format'] \
-                    else mdjs['ext']
+        extension = metadata_file_extension(mdjs, path, basename)
         if not os.path.isfile(os.path.join(path,
                                            '%s.%s' % (basename, extension))):
             with os.scandir(path) as directory:
