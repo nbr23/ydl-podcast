@@ -95,6 +95,7 @@ def process_options(sub):
             'writeinfojson': True,
             'writethumbnail': True,
             'ignoreerrors': sub['ignore_errors'],
+            'youtube_include_dash_manifest': True,
             }
     if sub['retention_days'] is not None and not sub['initialize']:
         options['daterange'] = DateRange(
