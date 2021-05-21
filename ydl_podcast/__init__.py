@@ -18,6 +18,7 @@ sub_defaults = {
         'best': False,
         'ignore_errors': False,
         'quiet': False,
+        'filename_template': '%(title)s [%(id)s][%(upload_date)s].%(ext)s',
         }
 
 
@@ -85,13 +86,12 @@ def get_playlist_metadata(sub, options):
             ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
     return metadata
 
-
 def process_options(sub):
     options = {
             'outtmpl': os.path.join(
                 sub['output_dir'],
                 sub['name'],
-                '%(title)s [%(id)s][%(upload_date)s].%(ext)s'),
+                sub['filename_template']),
             'writeinfojson': True,
             'writethumbnail': True,
             'ignoreerrors': sub['ignore_errors'],
@@ -131,8 +131,7 @@ def download(sub):
     metadata = get_playlist_metadata(sub, options)
 
     for entry in metadata:
-        mdfile_name = os.path.join(sub['output_dir'], sub['name'],
-                '.{}.{}.meta'.format(entry.get('id'), entry.get('title')))
+        mdfile_name = '%s.meta' % '.'.join(entry['_filename'].split('.')[:-1])
         if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
             with youtube_dl.YoutubeDL(options) as ydl:
                 if sub['quiet']:

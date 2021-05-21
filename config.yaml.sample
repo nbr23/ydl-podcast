@@ -6,6 +6,7 @@ subscriptions:
     download_last: 1 # Only download the last video at each run
     audio_only: True # Extract and keep audio only
     format: mp3      # Force end format
+    filename_template: '%(id)s.%(ext)s' # Use this format for files saved from this subscription
   - name: MyPodcast2
     url: https://youtube.com
     retention_days: 14 # How old is the oldest video to download and keep locally

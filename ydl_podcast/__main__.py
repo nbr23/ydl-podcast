@@ -14,7 +14,7 @@ def main():
         return -1
 
     for sub in config['subscriptions']:
-        sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root', 'best', 'format']}, sub_defaults)
+        sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root', 'best', 'format', 'filename_template']}, sub_defaults)
         if 'ydl_options' in sub and sub['ydl_options'] is not None\
                 and 'ydl_options' in config \
                 and config['ydl_options'] is not None:
