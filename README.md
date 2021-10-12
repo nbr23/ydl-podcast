@@ -24,6 +24,9 @@ The available settings are the following.
 - `url_root`: root url for the static files (used in the generation of the XML
   to point to the media files.
 - `subscriptions`: a list of feeds to subscribe to.
+- `youtube-dl-module`: Alternative youtube-dl python module. By default, this
+uses [youtube-dl](https://github.com/rg3/youtube-dl), but can leverage forks
+such as [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 ### Feed settings
 
