@@ -7,8 +7,7 @@ from urllib.parse import quote
 import json
 import datetime
 from datetime import date, timedelta
-import youtube_dl
-from youtube_dl.utils import DateRange
+import importlib
 
 sub_defaults = {
         'retention_days': None,
@@ -68,17 +67,17 @@ def metadata_parse(metadata_path):
                 }
 
 
-def get_playlist_metadata(sub, options):
+def get_playlist_metadata(ydl_mod, sub, options):
     options = options.copy()
     options.update({'quiet': True, 'simulate': True, 'forcejson': True, 'ignoreerrors': True})
     output = io.StringIO()
-    with youtube_dl.YoutubeDL(options) as ydl:
+    with ydl_mod.YoutubeDL(options) as ydl:
         try:
             ydl._screen_file = output
             if sub['quiet']:
                 ydl._err_file = io.StringIO()
             ydl.download([sub['url']])
-        except youtube_dl.utils.YoutubeDLError as e:
+        except ydl_mod.utils.YoutubeDLError as e:
             if not sub['quiet']:
                 print(e)
 
@@ -98,7 +97,7 @@ def process_options(sub):
             'youtube_include_dash_manifest': True,
             }
     if sub['retention_days'] is not None and not sub['initialize']:
-        options['daterange'] = DateRange(
+        options['daterange'] = ydl_mod.utils.DateRange(
                 (date.today() - timedelta(days=sub['retention_days']))
                 .strftime('%Y%m%d'), '99991231')
     if sub['download_last'] is not None and not sub['initialize']:
@@ -125,21 +124,21 @@ def process_options(sub):
     return options
 
 
-def download(sub):
+def download(ydl_mod, sub):
     downloaded = []
     options = process_options(sub)
-    metadata = get_playlist_metadata(sub, options)
+    metadata = get_playlist_metadata(ydl_mod, sub, options)
 
     for entry in metadata:
         mdfile_name = '%s.meta' % '.'.join(entry['_filename'].split('.')[:-1])
         if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
-            with youtube_dl.YoutubeDL(options) as ydl:
+            with ydl_mod.YoutubeDL(options) as ydl:
                 if sub['quiet']:
                     ydl._screen_file = io.StringIO()
                     ydl._err_file = ydl._screen_file
                 try:
                     ydl.download([entry['webpage_url']])
-                except youtube_dl.utils.YoutubeDLError as e:
+                except ydl_mod.utils.YoutubeDLError as e:
                     if not sub['quiet']:
                         print(e)
                 with open(mdfile_name, 'w+') as f:
@@ -207,3 +206,6 @@ def write_xml(sub):
     xml += '</channel></rss>'
     with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
+
+def get_ydl_module(config):
+    return importlib.import_module(config.get('youtube-dl-module', "youtube_dl").replace('-', '_'))

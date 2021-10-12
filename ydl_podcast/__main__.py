@@ -4,7 +4,7 @@ import os
 import sys
 from collections import ChainMap
 
-from . import load_config, write_xml, cleanup, download, sub_defaults
+from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module
 
 def main():
     argv = sys.argv
@@ -12,6 +12,8 @@ def main():
     if not config:
         print("No valid configuration found.")
         return -1
+
+    ydl_mod = get_ydl_module(config)
 
     for sub in config['subscriptions']:
         sub = ChainMap(sub, {t: config[t] for t in config.keys() if t in ['output_dir', 'url_root', 'best', 'format', 'filename_template']}, sub_defaults)
@@ -32,7 +34,7 @@ def main():
                 and sub['initialize']:
             sub['initialize'] = False
 
-        download(sub)
+        download(ydl_mod, sub)
 
         if sub['retention_days'] is not None and not sub['initialize']:
             cleanup(sub)

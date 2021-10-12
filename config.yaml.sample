@@ -17,3 +17,4 @@ subscriptions:
 
 output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/
+youtube-dl-module: youtube-dl
