@@ -19,7 +19,7 @@ setup(name='ydl_podcast',
           ],
       entry_points={
           'console_scripts': [
-              "ydl_podcast = ydl_podcast.__main__:main",
+              "ydl-podcast = ydl_podcast.__main__:main",
               ],
           },
       )
