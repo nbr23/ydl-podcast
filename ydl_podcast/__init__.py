@@ -78,7 +78,7 @@ def get_playlist_metadata(ydl_mod, sub, options):
             else:
                 ydl._screen_file = output
             if sub['quiet']:
-                if '_out_files' in ydl:
+                if ydl._out_files is not None:
                     ydl._out_files.error = io.StringIO()
                 else:
                     ydl._err_file = io.StringIO()
@@ -141,7 +141,18 @@ def download(ydl_mod, sub):
             with ydl_mod.YoutubeDL(options) as ydl:
                 if sub['quiet']:
                     ydl._screen_file = io.StringIO()
-                    ydl._err_file = ydl._screen_file
+                    if ydl._out_files is not None:
+                        ydl._out_files.out = io.StringIO()
+                        ydl._out_files.error = ydl._out_files.out
+                    else:
+                        ydl._screen_file = io.StringIO()
+                        ydl._err_file = ydl._screen_file
+            if sub['quiet']:
+                if ydl._out_files is not None:
+                    ydl._out_files.error = io.StringIO()
+                else:
+                    ydl._err_file = io.StringIO()
+
                 try:
                     ydl.download([entry['webpage_url']])
                 except ydl_mod.utils.YoutubeDLError as e:
