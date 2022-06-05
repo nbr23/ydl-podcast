@@ -73,16 +73,22 @@ def get_playlist_metadata(ydl_mod, sub, options):
     output = io.StringIO()
     with ydl_mod.YoutubeDL(options) as ydl:
         try:
-            ydl._screen_file = output
+            if ydl._out_files is not None:
+                ydl._out_files.out = output
+            else:
+                ydl._screen_file = output
             if sub['quiet']:
-                ydl._err_file = io.StringIO()
+                if '_out_files' in ydl:
+                    ydl._out_files.error = io.StringIO()
+                else:
+                    ydl._err_file = io.StringIO()
             ydl.download([sub['url']])
         except ydl_mod.utils.YoutubeDLError as e:
             if not sub['quiet']:
                 print(e)
 
     metadata = [json.loads(entry) for entry in
-            ydl._screen_file.getvalue().split('\n') if len(entry) > 0]
+            output.getvalue().split('\n') if len(entry) > 0]
     return metadata
 
 def process_options(sub):
