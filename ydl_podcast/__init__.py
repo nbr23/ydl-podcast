@@ -147,17 +147,18 @@ def download(ydl_mod, sub):
                     else:
                         ydl._screen_file = io.StringIO()
                         ydl._err_file = ydl._screen_file
-            if sub['quiet']:
-                if ydl._out_files is not None:
-                    ydl._out_files.error = io.StringIO()
-                else:
-                    ydl._err_file = io.StringIO()
+                if sub['quiet']:
+                    if ydl._out_files is not None:
+                        ydl._out_files.error = io.StringIO()
+                    else:
+                        ydl._err_file = io.StringIO()
 
                 try:
                     ydl.download([entry['webpage_url']])
                 except ydl_mod.utils.YoutubeDLError as e:
                     if not sub['quiet']:
                         print(e)
+                    continue
                 with open(mdfile_name, 'w+') as f:
                     entry.update({
                         'subscription_name': sub['name'],
