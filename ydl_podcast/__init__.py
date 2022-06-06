@@ -133,8 +133,10 @@ def download(ydl_mod, sub):
     downloaded = []
     options = process_options(sub)
     metadata = get_metadata(ydl_mod, sub['url'], options, sub['quiet'])
+    if sub['download_last'] is not None and not sub.get('initialize', False):
+        metadata = metadata[:sub['download_last']]
 
-    for md in metadata:
+    for i, md in enumerate(metadata):
         entry = get_metadata(ydl_mod, md['url'], options, quiet=True)[0]
         mdfile_name = '%s.meta' % '.'.join(entry['_filename'].split('.')[:-1])
         if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
@@ -165,12 +167,14 @@ def download(ydl_mod, sub):
                         'formats': [fmt for fmt in entry.get('formats')
                             if (options.get('format') is None
                                 or (fmt.get('format') == options.get('format')))]
-                        })
+                            })
                     downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
         elif not sub['quiet']:
             print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
+            if sub['download_last'] is not None and i > sub['download_last']:
+                break
     return downloaded
 
 
