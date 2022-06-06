@@ -66,10 +66,9 @@ def metadata_parse(metadata_path):
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
 
-
-def get_playlist_metadata(ydl_mod, sub, options):
+def get_metadata(ydl_mod, url, options, quiet=True):
     options = options.copy()
-    options.update({'quiet': True, 'simulate': True, 'forcejson': True, 'ignoreerrors': True})
+    options.update({'quiet': True, 'simulate': True, 'forcejson': True, 'ignoreerrors': True, 'extract_flat': 'in_playlist'})
     output = io.StringIO()
     with ydl_mod.YoutubeDL(options) as ydl:
         try:
@@ -77,14 +76,14 @@ def get_playlist_metadata(ydl_mod, sub, options):
                 ydl._out_files.out = output
             else:
                 ydl._screen_file = output
-            if sub['quiet']:
+            if quiet:
                 if ydl._out_files is not None:
                     ydl._out_files.error = io.StringIO()
                 else:
                     ydl._err_file = io.StringIO()
-            ydl.download([sub['url']])
+            ydl.download([url])
         except ydl_mod.utils.YoutubeDLError as e:
-            if not sub['quiet']:
+            if not quiet:
                 print(e)
 
     metadata = [json.loads(entry) for entry in
@@ -133,9 +132,10 @@ def process_options(sub):
 def download(ydl_mod, sub):
     downloaded = []
     options = process_options(sub)
-    metadata = get_playlist_metadata(ydl_mod, sub, options)
+    metadata = get_metadata(ydl_mod, sub['url'], options, sub['quiet'])
 
-    for entry in metadata:
+    for md in metadata:
+        entry = get_metadata(ydl_mod, md['url'], options, quiet=True)[0]
         mdfile_name = '%s.meta' % '.'.join(entry['_filename'].split('.')[:-1])
         if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
             with ydl_mod.YoutubeDL(options) as ydl:
