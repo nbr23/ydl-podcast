@@ -1,6 +1,7 @@
 subscriptions:
   - name: MyPodcast
     url: https://youtube.com
+    title: My Podcast  # Optional title for the channel
     retention_days: 14 # How old is the oldest video to download and keep locally
     initialize: True # Download the whole channel on first run
     download_last: 1 # Only download the last video at each run

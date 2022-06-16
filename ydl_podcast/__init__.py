@@ -200,7 +200,7 @@ def write_xml(sub):
             <title>%s</title>
             <link href="%s" rel="self" type="application/rss+xml"/>""" \
                     % (datetime.datetime.now(),
-                       sub['name'],
+                        sub['title'] or sub['name'],
                        '/'.join([sub['url_root'], "%s.xml" % sub['name']]))
 
     for md_file in glob.glob(os.path.join(sub['output_dir'],
