@@ -8,6 +8,7 @@ import json
 import datetime
 from datetime import date, timedelta
 import importlib
+from operator import itemgetter
 
 sub_defaults = {
         'retention_days': None,
@@ -209,10 +210,12 @@ def write_xml(sub):
                         sub['title'] or sub['name'],
                        '/'.join([sub['url_root'], "%s.xml" % sub['name']]))
 
+    items = []
+    unique_ids = {}
     for md_file in glob.glob(os.path.join(sub['output_dir'],
                                            '%s/*.info.json' % sub['name'])):
         md = metadata_parse(md_file)
-        xml += """
+        item = """
             <item>
             <id>%s</id>
             <title><![CDATA[%s]]></title>
@@ -233,6 +236,16 @@ def write_xml(sub):
                     '/'.join([sub['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
                     md['description'],
                     md['duration'])
+        items.append((md['timestamp'], md['id'], item))
+
+    items = sorted(items, key=itemgetter(0), reverse=True)
+    for t in items:
+        if t[1] not in unique_ids or unique_ids[t[1]]['timestamp'] < t[0]:
+            unique_ids[t[1]] = { "timestamp": t[0], "xml": t[2] }
+
+    for i in unique_ids:
+        xml += unique_ids[i]['xml']
+
     xml += '</channel></rss>'
     with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
