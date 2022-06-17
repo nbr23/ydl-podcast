@@ -201,14 +201,14 @@ def cleanup(sub):
 def write_xml(sub):
     directory = os.path.join(sub['output_dir'], sub['name'])
     xml = """<?xml version="1.0"?>
-            <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-            <channel>
-            <updated>%s</updated>
-            <title><![CDATA[%s]]></title>
-            <link href="%s" rel="self" type="application/rss+xml"/>""" \
-                    % (datetime.datetime.now(),
-                        sub['title'] or sub['name'],
-                       '/'.join([sub['url_root'], "%s.xml" % sub['name']]))
+             <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+             <channel>
+             <updated>%s</updated>
+             <title><![CDATA[%s]]></title>
+             <link href="%s" />
+          """ % (datetime.datetime.now(),
+                 sub['title'] or sub['name'],
+                 sub['url'])
 
     items = []
     unique_ids = {}
