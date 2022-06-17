@@ -161,13 +161,6 @@ def download(ydl_mod, sub):
                     if not sub['quiet']:
                         print(e)
                     continue
-                with open(mdfile_name, 'w+') as f:
-                    entry.update({
-                        'subscription_name': sub['name'],
-                        'formats': [fmt for fmt in entry.get('formats')
-                            if (options.get('format') is None
-                                or (fmt.get('format') == options.get('format')))]
-                            })
                     downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
@@ -175,6 +168,17 @@ def download(ydl_mod, sub):
             print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
             if sub['download_last'] is not None and i > sub['download_last']:
                 break
+
+        with open(mdfile_name, 'w+') as f:
+            entry.update({
+                'subscription_name': sub['name'],
+                'formats': [fmt for fmt in entry.get('formats')
+                    if (options.get('format') is None
+                        or (fmt.get('format') == options.get('format')))]
+                    })
+
+            f.write(json.dumps(entry, ensure_ascii=False))
+
     return downloaded
 
 
