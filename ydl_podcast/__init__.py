@@ -201,7 +201,7 @@ def write_xml(sub):
             <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
             <updated>%s</updated>
-            <title>%s</title>
+            <title><![CDATA[%s]]></title>
             <link href="%s" rel="self" type="application/rss+xml"/>""" \
                     % (datetime.datetime.now(),
                         sub['title'] or sub['name'],
@@ -213,7 +213,7 @@ def write_xml(sub):
         xml += """
             <item>
             <id>%s</id>
-            <title>%s</title>
+            <title><![CDATA[%s]]></title>
             <enclosure url="%s" type="%s"/>
             <pubDate>%s</pubDate>
             <itunes:image href="%s"/>
