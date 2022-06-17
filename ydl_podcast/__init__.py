@@ -54,6 +54,7 @@ def metadata_parse(metadata_path):
                     if f.name.startswith(basename) and ext not in [thumb_ext, 'json', 'meta']:
                         extension = ext
                         break
+        media_file = os.path.join(path, '%s.%s' % (basename, extension))
         return {'title': mdjs['title'],
                 'id': mdjs['id'],
                 'pub_date': datetime.datetime.strptime(mdjs['upload_date'],
@@ -63,6 +64,7 @@ def metadata_parse(metadata_path):
                 'description': mdjs['description'],
                 'thumbnail': thumbnail_file,
                 'filename': '%s.%s' % (basename, extension),
+                'timestamp': os.path.getmtime(media_file),
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
 
@@ -216,6 +218,7 @@ def write_xml(sub):
             <title><![CDATA[%s]]></title>
             <enclosure url="%s" type="%s"/>
             <pubDate>%s</pubDate>
+            <timestamp>%s</timestamp>
             <itunes:image href="%s"/>
             <itunes:summary><![CDATA[%s]]></itunes:summary>
             <itunes:duration>%s</itunes:duration>
@@ -226,6 +229,7 @@ def write_xml(sub):
                    ('audio/%s' % md['extension']) if sub['audio_only'] \
                            else 'video/%s' % md['extension'],
                     md['pub_date'],
+                    md['timestamp'],
                     '/'.join([sub['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
                     md['description'],
                     md['duration'])
