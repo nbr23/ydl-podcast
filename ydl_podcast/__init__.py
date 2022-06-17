@@ -52,7 +52,7 @@ def metadata_parse(metadata_path):
             with os.scandir(path) as directory:
                 for f in directory:
                     ext = f.name.split('.')[-1]
-                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json', 'meta']:
+                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json', 'meta', 'webp']:
                         extension = ext
                         break
         media_file = os.path.join(path, '%s.%s' % (basename, extension))
