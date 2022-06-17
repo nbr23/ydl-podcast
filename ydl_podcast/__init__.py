@@ -51,7 +51,7 @@ def metadata_parse(metadata_path):
             with os.scandir(path) as directory:
                 for f in directory:
                     ext = f.name.split('.')[-1]
-                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json']:
+                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json', 'meta']:
                         extension = ext
                         break
         return {'title': mdjs['title'],
