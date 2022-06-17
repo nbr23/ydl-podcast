@@ -200,14 +200,23 @@ def cleanup(sub):
 
 def write_xml(sub):
     directory = os.path.join(sub['output_dir'], sub['name'])
+
+    image_tag = ""
+
+    if sub['image'] is not None:
+        image_url = "/".join([sub["url_root"], sub["name"], sub["image"]])
+        image_tag = "<image><url>%s</url></image>" % (image_url)
+
     xml = """<?xml version="1.0"?>
              <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
              <channel>
              <updated>%s</updated>
              <title><![CDATA[%s]]></title>
+             %s
              <link href="%s" />
           """ % (datetime.datetime.now(),
                  sub['title'] or sub['name'],
+                 image_tag,
                  sub['url'])
 
     items = []
