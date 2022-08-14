@@ -90,7 +90,7 @@ def get_metadata(ydl_mod, url, options, quiet=True):
             output.getvalue().split('\n') if len(entry) > 0]
     return metadata
 
-def process_options(sub):
+def process_options(ydl_mod, sub):
     options = {
             'outtmpl': os.path.join(
                 sub['output_dir'],
@@ -131,7 +131,7 @@ def process_options(sub):
 
 def download(ydl_mod, sub):
     downloaded = []
-    options = process_options(sub)
+    options = process_options(ydl_mod, sub)
     metadata = get_metadata(ydl_mod, sub['url'], options, sub['quiet'])
     if sub['download_last'] is not None and not sub.get('initialize', False):
         metadata = metadata[:sub['download_last']]
