@@ -100,6 +100,7 @@ def process_options(ydl_mod, sub):
             'writethumbnail': True,
             'ignoreerrors': sub['ignore_errors'],
             'youtube_include_dash_manifest': True,
+            'matchtitle': sub.get('matchtitle', None)
             }
     if sub['retention_days'] is not None and not sub['initialize']:
         options['daterange'] = ydl_mod.utils.DateRange(
