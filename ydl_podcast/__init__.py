@@ -8,6 +8,7 @@ import json
 import datetime
 from datetime import date, timedelta
 import importlib
+from operator import itemgetter
 
 sub_defaults = {
         'retention_days': None,
@@ -51,9 +52,10 @@ def metadata_parse(metadata_path):
             with os.scandir(path) as directory:
                 for f in directory:
                     ext = f.name.split('.')[-1]
-                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json']:
+                    if f.name.startswith(basename) and ext not in [thumb_ext, 'json', 'meta', 'webp']:
                         extension = ext
                         break
+        media_file = os.path.join(path, '%s.%s' % (basename, extension))
         return {'title': mdjs['title'],
                 'id': mdjs['id'],
                 'pub_date': datetime.datetime.strptime(mdjs['upload_date'],
@@ -63,6 +65,7 @@ def metadata_parse(metadata_path):
                 'description': mdjs['description'],
                 'thumbnail': thumbnail_file,
                 'filename': '%s.%s' % (basename, extension),
+                'timestamp': os.path.getmtime(media_file),
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
 
@@ -162,13 +165,6 @@ def download(ydl_mod, sub):
                     if not sub['quiet']:
                         print(e)
                     continue
-                with open(mdfile_name, 'w+') as f:
-                    entry.update({
-                        'subscription_name': sub['name'],
-                        'formats': [fmt for fmt in entry.get('formats')
-                            if (options.get('format') is None
-                                or (fmt.get('format') == options.get('format')))]
-                            })
                     downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
@@ -176,6 +172,17 @@ def download(ydl_mod, sub):
             print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
             if sub['download_last'] is not None and i > sub['download_last']:
                 break
+
+        with open(mdfile_name, 'w+') as f:
+            entry.update({
+                'subscription_name': sub['name'],
+                'formats': [fmt for fmt in entry.get('formats')
+                    if (options.get('format') is None
+                        or (fmt.get('format') == options.get('format')))]
+                    })
+
+            f.write(json.dumps(entry, ensure_ascii=False))
+
     return downloaded
 
 
@@ -194,25 +201,37 @@ def cleanup(sub):
 
 def write_xml(sub):
     directory = os.path.join(sub['output_dir'], sub['name'])
-    xml = """<?xml version="1.0"?>
-            <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-            <channel>
-            <updated>%s</updated>
-            <title>%s</title>
-            <link href="%s" rel="self" type="application/rss+xml"/>""" \
-                    % (datetime.datetime.now(),
-                       sub['name'],
-                       '/'.join([sub['url_root'], "%s.xml" % sub['name']]))
 
+    image_tag = ""
+
+    if sub['image'] is not None:
+        image_url = "/".join([sub["url_root"], sub["name"], sub["image"]])
+        image_tag = "<image><url>%s</url></image>" % (image_url)
+
+    xml = """<?xml version="1.0"?>
+             <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+             <channel>
+             <updated>%s</updated>
+             <title><![CDATA[%s]]></title>
+             %s
+             <link href="%s" />
+          """ % (datetime.datetime.now(),
+                 sub['title'] or sub['name'],
+                 image_tag,
+                 sub['url'])
+
+    items = []
+    unique_ids = {}
     for md_file in glob.glob(os.path.join(sub['output_dir'],
                                            '%s/*.info.json' % sub['name'])):
         md = metadata_parse(md_file)
-        xml += """
+        item = """
             <item>
             <id>%s</id>
-            <title>%s</title>
+            <title><![CDATA[%s]]></title>
             <enclosure url="%s" type="%s"/>
             <pubDate>%s</pubDate>
+            <timestamp>%s</timestamp>
             <itunes:image href="%s"/>
             <itunes:summary><![CDATA[%s]]></itunes:summary>
             <itunes:duration>%s</itunes:duration>
@@ -223,9 +242,20 @@ def write_xml(sub):
                    ('audio/%s' % md['extension']) if sub['audio_only'] \
                            else 'video/%s' % md['extension'],
                     md['pub_date'],
+                    md['timestamp'],
                     '/'.join([sub['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
                     md['description'],
                     md['duration'])
+        items.append((md['timestamp'], md['id'], item))
+
+    items = sorted(items, key=itemgetter(0), reverse=True)
+    for t in items:
+        if t[1] not in unique_ids or unique_ids[t[1]]['timestamp'] < t[0]:
+            unique_ids[t[1]] = { "timestamp": t[0], "xml": t[2] }
+
+    for i in unique_ids:
+        xml += unique_ids[i]['xml']
+
     xml += '</channel></rss>'
     with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
         fout.write(xml)
