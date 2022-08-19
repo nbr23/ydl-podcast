@@ -157,19 +157,19 @@ def download(ydl_mod, sub):
                         ydl._err_file = io.StringIO()
 
                 try:
-                    ydl.download([entry['webpage_url']])
+                    if ydl.download([entry['webpage_url']]) == 0:
+                        with open(mdfile_name, 'w+') as f:
+                            entry.update({
+                                'subscription_name': sub['name'],
+                                'formats': [fmt for fmt in entry.get('formats')
+                                    if (options.get('format') is None
+                                        or (fmt.get('format') == options.get('format')))]
+                                    })
+                            f.write(json.dumps(entry, ensure_ascii=False))
+                            downloaded.append(entry)
                 except ydl_mod.utils.YoutubeDLError as e:
                     if not sub['quiet']:
                         print(e)
-                    continue
-                with open(mdfile_name, 'w+') as f:
-                    entry.update({
-                        'subscription_name': sub['name'],
-                        'formats': [fmt for fmt in entry.get('formats')
-                            if (options.get('format') is None
-                                or (fmt.get('format') == options.get('format')))]
-                            })
-                    downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
             print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
         elif not sub['quiet']:
