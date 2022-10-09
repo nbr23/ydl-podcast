@@ -30,6 +30,7 @@ def load_config(config_path):
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
     return config
 
+
 def metadata_file_extension(metadata, data_path, basename):
     if ('audio only' in metadata['format'] and
             os.path.isfile(os.path.join(
@@ -37,6 +38,7 @@ def metadata_file_extension(metadata, data_path, basename):
                 '%s.%s' % (basename, metadata['acodec'])))):
         return metadata['acodec']
     return metadata['ext']
+
 
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
@@ -58,7 +60,7 @@ def metadata_parse(metadata_path):
                 'id': mdjs['id'],
                 'pub_date': datetime.datetime.strptime(mdjs['upload_date'],
                                                        '%Y%m%d')
-                                    .strftime("%a, %d %b %Y %H:%M:%S +0000"),
+                .strftime("%a, %d %b %Y %H:%M:%S +0000"),
                 'extension': extension,
                 'description': mdjs['description'],
                 'thumbnail': thumbnail_file,
@@ -66,9 +68,11 @@ def metadata_parse(metadata_path):
                 'duration': str(datetime.timedelta(seconds=mdjs['duration']))
                 }
 
+
 def get_metadata(ydl_mod, url, options, quiet=True):
     options = options.copy()
-    options.update({'quiet': True, 'simulate': True, 'forcejson': True, 'ignoreerrors': True, 'extract_flat': 'in_playlist'})
+    options.update({'quiet': True, 'simulate': True, 'forcejson': True,
+                   'ignoreerrors': True, 'extract_flat': 'in_playlist'})
     output = io.StringIO()
     with ydl_mod.YoutubeDL(options) as ydl:
         try:
@@ -87,25 +91,26 @@ def get_metadata(ydl_mod, url, options, quiet=True):
                 print(e)
 
     metadata = [json.loads(entry) for entry in
-            output.getvalue().split('\n') if len(entry) > 0]
+                output.getvalue().split('\n') if len(entry) > 0]
     return metadata
+
 
 def process_options(ydl_mod, sub):
     options = {
-            'outtmpl': os.path.join(
-                sub['output_dir'],
-                sub['name'],
-                sub['filename_template']),
-            'writeinfojson': True,
-            'writethumbnail': True,
-            'ignoreerrors': sub['ignore_errors'],
-            'youtube_include_dash_manifest': True,
-            'matchtitle': sub.get('matchtitle', None)
-            }
+        'outtmpl': os.path.join(
+            sub['output_dir'],
+            sub['name'],
+            sub['filename_template']),
+        'writeinfojson': True,
+        'writethumbnail': True,
+        'ignoreerrors': sub['ignore_errors'],
+        'youtube_include_dash_manifest': True,
+        'matchtitle': sub.get('matchtitle', None)
+    }
     if sub['retention_days'] is not None and not sub['initialize']:
         options['daterange'] = ydl_mod.utils.DateRange(
-                (date.today() - timedelta(days=sub['retention_days']))
-                .strftime('%Y%m%d'), '99991231')
+            (date.today() - timedelta(days=sub['retention_days']))
+            .strftime('%Y%m%d'), '99991231')
     if sub['download_last'] is not None and not sub['initialize']:
         options['max_downloads'] = sub['download_last']
     if sub['initialize']:
@@ -117,7 +122,7 @@ def process_options(ydl_mod, sub):
             'preferredcodec': sub.get('format', 'best'),
             'preferredquality': '5',
             'nopostoverwrites': False
-            }]
+        }]
     elif 'format' in sub:
         if sub['best']:
             options['format'] = 'bestvideo[ext=%s]' % sub['format']
@@ -166,14 +171,16 @@ def download(ydl_mod, sub):
                     entry.update({
                         'subscription_name': sub['name'],
                         'formats': [fmt for fmt in entry.get('formats')
-                            if (options.get('format') is None
-                                or (fmt.get('format') == options.get('format')))]
-                            })
+                                    if (options.get('format') is None
+                                        or (fmt.get('format') == options.get('format')))]
+                    })
                     downloaded.append(entry)
         elif entry.get('is_live', False) and not sub['quiet']:
-            print("Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
+            print(
+                "Skipping ongoing live {} - {}".format(entry.get('id'), entry.get('title')))
         elif not sub['quiet']:
-            print("Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
+            print(
+                "Skipping already retrieved {} - {}".format(entry.get('id'), entry.get('title')))
             if sub['download_last'] is not None and i > sub['download_last']:
                 break
     return downloaded
@@ -205,7 +212,7 @@ def write_xml(sub):
                        '/'.join([sub['url_root'], "%s.xml" % sub['name']]))
 
     for md_file in glob.glob(os.path.join(sub['output_dir'],
-                                           '%s/*.info.json' % sub['name'])):
+                                          '%s/*.info.json' % sub['name'])):
         md = metadata_parse(md_file)
         xml += """
             <item>
@@ -219,16 +226,19 @@ def write_xml(sub):
             </item>
             """ % (html.escape(md['id']),
                    html.escape(md['title']),
-                   '/'.join([sub['url_root'], quote(sub['name']), quote(md['filename'])]),
-                   ('audio/%s' % md['extension']) if sub['audio_only'] \
-                           else 'video/%s' % md['extension'],
-                    md['pub_date'],
-                    '/'.join([sub['url_root'], quote(sub['name']), quote(md['thumbnail'])]),
-                    md['description'],
-                    md['duration'])
+                   '/'.join([sub['url_root'], quote(sub['name']),
+                            quote(md['filename'])]),
+                   ('audio/%s' % md['extension']) if sub['audio_only']
+                   else 'video/%s' % md['extension'],
+                   md['pub_date'],
+                   '/'.join([sub['url_root'], quote(sub['name']),
+                            quote(md['thumbnail'])]),
+                   md['description'],
+                   md['duration'])
     xml += '</channel></rss>'
-    with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w")  as fout:
+    with open("%s.xml" % os.path.join(sub['output_dir'], sub['name']), "w") as fout:
         fout.write(xml)
+
 
 def get_ydl_module(config):
     return importlib.import_module(config.get('youtube-dl-module', "youtube_dl").replace('-', '_'))
