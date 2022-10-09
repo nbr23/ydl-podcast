@@ -10,15 +10,15 @@ from datetime import date, timedelta
 import importlib
 
 sub_defaults = {
-        'retention_days': None,
-        'audio_only': False,
-        'download_last': None,
-        'initialize': False,
-        'best': False,
-        'ignore_errors': False,
-        'quiet': False,
-        'filename_template': '%(title)s [%(id)s][%(upload_date)s].%(ext)s',
-        }
+    'retention_days': None,
+    'audio_only': False,
+    'download_last': None,
+    'initialize': False,
+    'best': False,
+    'ignore_errors': False,
+    'quiet': False,
+    'filename_template': '%(title)s [%(id)s][%(upload_date)s].%(ext)s',
+}
 
 
 def load_config(config_path):
