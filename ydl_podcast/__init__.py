@@ -143,7 +143,10 @@ def download(ydl_mod, sub):
         metadata = metadata[:sub['download_last']]
 
     for i, md in enumerate(metadata):
-        entry = get_metadata(ydl_mod, md['url'], options, quiet=True)[0]
+        md_json = get_metadata(ydl_mod, md['url'], options, quiet=True)
+        if len(md_json) < 1:
+            continue
+        entry = md_json[0]
         mdfile_name = '%s.meta' % '.'.join(entry['_filename'].split('.')[:-1])
         if not os.path.isfile(mdfile_name) and not entry.get('is_live', False):
             with ydl_mod.YoutubeDL(options) as ydl:
