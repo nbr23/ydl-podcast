@@ -76,12 +76,12 @@ def get_metadata(ydl_mod, url, options, quiet=True):
     output = io.StringIO()
     with ydl_mod.YoutubeDL(options) as ydl:
         try:
-            if ydl._out_files is not None:
+            if hasattr(ydl, '_out_files'):
                 ydl._out_files.out = output
             else:
                 ydl._screen_file = output
             if quiet:
-                if ydl._out_files is not None:
+                if hasattr(ydl, '_out_files'):
                     ydl._out_files.error = io.StringIO()
                 else:
                     ydl._err_file = io.StringIO()
