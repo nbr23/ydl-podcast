@@ -192,6 +192,8 @@ def download(ydl_mod, sub):
 def cleanup(sub):
     deleted = []
     directory = os.path.join(sub['output_dir'], sub['name'])
+    if not os.path.isdir(directory):
+        return deleted
     for f in os.listdir(directory):
         fpath = os.path.join(directory, f)
         mtime = date.fromtimestamp(os.path.getmtime(fpath))
