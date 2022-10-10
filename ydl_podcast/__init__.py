@@ -71,7 +71,7 @@ def metadata_parse(metadata_path):
 
 def get_metadata(ydl_mod, url, options, quiet=True):
     options = options.copy()
-    options.update({'quiet': True, 'simulate': True, 'forcejson': True,
+    options.update({'quiet': quiet, 'simulate': True, 'forcejson': True,
                    'ignoreerrors': True, 'extract_flat': 'in_playlist'})
     output = io.StringIO()
     with ydl_mod.YoutubeDL(options) as ydl:
