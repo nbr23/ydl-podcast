@@ -1,2 +1,4 @@
 youtube_dl
-pyyaml
+Jinja2==3.1.2
+MarkupSafe==2.1.1
+PyYAML==6.0
