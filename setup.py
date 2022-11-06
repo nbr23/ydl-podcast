@@ -15,7 +15,8 @@ setup(name='ydl_podcast',
       zip_safe=True,
       install_requires=[
           'youtube_dl',
-          'pyyaml'
+          'pyyaml',
+          'jinja2'
           ],
       entry_points={
           'console_scripts': [
