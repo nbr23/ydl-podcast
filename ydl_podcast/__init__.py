@@ -8,6 +8,9 @@ import json
 import datetime
 from datetime import date, timedelta
 import importlib
+from jinja2 import Template
+
+from .template import ATOM_TMPL
 
 sub_defaults = {
     "retention_days": None,
@@ -44,8 +47,10 @@ def metadata_parse(metadata_path):
         mdjs = json.load(metadata)
         basename = ".".join(os.path.basename(metadata_path).split(".")[:-2])
         path = os.path.dirname(metadata_path)
-        thumb_ext = mdjs["thumbnail"].split(".")[-1]
-        thumbnail_file = "%s.%s" % (basename, thumb_ext)
+        thumbnail_file = None
+        if mdjs.get("thumbnail") is not None:
+            thumb_ext = mdjs["thumbnail"].split(".")[-1]
+            thumbnail_file = "%s.%s" % (basename, thumb_ext)
         extension = metadata_file_extension(mdjs, path, basename)
         if not os.path.isfile(os.path.join(path, "%s.%s" % (basename, extension))):
             with os.scandir(path) as directory:
@@ -228,49 +233,28 @@ def cleanup(sub):
 
 
 def write_xml(sub):
-    directory = os.path.join(sub["output_dir"], sub["name"])
-    xml = """<?xml version="1.0"?>
-            <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-            <channel>
-            <updated>%s</updated>
-            <title>%s</title>
-            <link href="%s" rel="self" type="application/rss+xml"/>""" % (
-        datetime.datetime.now(),
-        sub["name"],
-        "/".join([sub["url_root"], "%s.xml" % sub["name"]]),
-    )
+    mds = [metadata_parse(md_file) for md_file in glob.glob(os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"]))]
 
-    for md_file in glob.glob(
-        os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"])
-    ):
-        md = metadata_parse(md_file)
-        xml += """
-            <item>
-            <id>%s</id>
-            <title>%s</title>
-            <enclosure url="%s" type="%s"/>
-            <pubDate>%s</pubDate>
-            <itunes:image href="%s"/>
-            <itunes:summary><![CDATA[%s]]></itunes:summary>
-            <itunes:duration>%s</itunes:duration>
-            </item>
-            """ % (
-            html.escape(md["id"]),
-            html.escape(md["title"]),
-            "/".join([sub["url_root"], quote(sub["name"]),
-                     quote(md["filename"])]),
-            ("audio/%s" % md["extension"])
-            if sub["audio_only"]
-            else "video/%s" % md["extension"],
-            md["pub_date"],
-            "/".join([sub["url_root"], quote(sub["name"]),
-                     quote(md["thumbnail"])]),
-            md["description"],
-            md["duration"],
-        )
-    xml += "</channel></rss>"
+    tmpl_args = {
+        "last_update": datetime.datetime.now(),
+        "channel_title": sub["name"],
+        "channel_link": "/".join([sub["url_root"], "%s.xml" % sub["name"]]),
+        "items": [
+            {
+                "id": html.escape(md["id"]),
+                "title": html.escape(md["title"]),
+                "link": "/".join([sub["url_root"], quote(sub["name"]), quote(md["filename"])]),
+                "media_type": ("audio/%s" % md["extension"]) if sub["audio_only"] else "video/%s" % md["extension"],
+                "pubDate": md["pub_date"],
+                "thumbnail": "/".join([sub["url_root"], quote(sub["name"]), quote(md["thumbnail"])]) if md.get("thumbnail") is not None else None,
+                "description": md["description"],
+                "duration": md["duration"],
+            }   for md in mds
+        ]
+    }
+
     with open("%s.xml" % os.path.join(sub["output_dir"], sub["name"]), "w") as fout:
-        fout.write(xml)
+        fout.write(Template(ATOM_TMPL).render(**tmpl_args))
 
 
 def get_ydl_module(config):
