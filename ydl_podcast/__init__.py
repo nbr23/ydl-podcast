@@ -243,7 +243,7 @@ def write_xml(sub):
             {
                 "id": html.escape(md["id"]),
                 "title": html.escape(md["title"]),
-                "link": "/".join([sub["url_root"], quote(sub["name"]), quote(md["filename"])]),
+                "url": "/".join([sub["url_root"], quote(sub["name"]), quote(md["filename"])]),
                 "media_type": ("audio/%s" % md["extension"]) if sub["audio_only"] else "video/%s" % md["extension"],
                 "pubDate": md["pub_date"],
                 "thumbnail": "/".join([sub["url_root"], quote(sub["name"]), quote(md["thumbnail"])]) if md.get("thumbnail") is not None else None,

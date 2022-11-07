@@ -15,8 +15,8 @@ ATOM_TMPL = """
     {% if item.thumbnail != None %}
     <itunes:image href="{{ item.thumbnail }}"/>
     {% endif %}
-    <itunes:summary><![CDATA[item.summary]]></itunes:summary>
-    <itunes:duration>item.duration</itunes:duration>
+    <itunes:summary><![CDATA[{{ item.description }}]]></itunes:summary>
+    <itunes:duration>{{ item.duration }}</itunes:duration>
     </item>
 {% endfor %}
   </channel>
