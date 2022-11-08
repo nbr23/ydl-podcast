@@ -64,12 +64,12 @@ def metadata_parse(metadata_path):
             "id": mdjs["id"],
             "pub_date": datetime.datetime.strptime(
                 mdjs["upload_date"], "%Y%m%d"
-            ).strftime("%a, %d %b %Y %H:%M:%S +0000"),
+            ).strftime("%a, %d %b %Y %H:%M:%S +0000") if  mdjs.get("upload_date") is not None else None,
             "extension": extension,
-            "description": mdjs["description"],
+            "description": mdjs.get("description"),
             "thumbnail": thumbnail_file,
             "filename": "%s.%s" % (basename, extension),
-            "duration": str(datetime.timedelta(seconds=mdjs["duration"])),
+            "duration": str(datetime.timedelta(seconds=mdjs["duration"])) if mdjs.get("duration") is not None else None,
         }
 
 

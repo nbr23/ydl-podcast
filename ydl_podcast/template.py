@@ -8,15 +8,13 @@ ATOM_TMPL = """
 
 {% for item in items %}
     <item>
-    <id>{{ item.id }}</id>
-    <title>{{ item.title }}</title>
-    <enclosure url="{{ item.url }}" type="{{ item.media_type }}"/>
-    <pubDate>{{ item.pubDate }}</pubDate>
-    {% if item.thumbnail != None %}
-    <itunes:image href="{{ item.thumbnail }}"/>
-    {% endif %}
-    <itunes:summary><![CDATA[{{ item.description }}]]></itunes:summary>
-    <itunes:duration>{{ item.duration }}</itunes:duration>
+      <id>{{ item.id }}</id>
+      <title>{{ item.title }}</title>
+      <enclosure url="{{ item.url }}" type="{{ item.media_type }}"/>
+      {% if item.pubDate != None %}<pubDate>{{ item.pubDate }}</pubDate>{% endif %}
+      {% if item.thumbnail != None %}<itunes:image href="{{ item.thumbnail }}"/>{% endif %}
+      {% if item.description != None %}<itunes:summary><![CDATA[{{ item.description }}]]></itunes:summary> {% endif %}
+      {% if item.duration != None %}<itunes:duration>{{ item.duration }}</itunes:duration>{% endif %}
     </item>
 {% endfor %}
   </channel>
