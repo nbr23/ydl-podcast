@@ -56,7 +56,11 @@ def metadata_parse(metadata_path):
             with os.scandir(path) as directory:
                 for f in directory:
                     ext = f.name.split(".")[-1]
-                    if f.name.startswith(basename) and ext != "json" and (mdjs.get("thumbnail") is None or ext != thumb_ext):
+                    if (
+                        f.name.startswith(basename)
+                        and ext != "json"
+                        and (mdjs.get("thumbnail") is None or ext != thumb_ext)
+                    ):
                         extension = ext
                         break
         return {
@@ -64,12 +68,16 @@ def metadata_parse(metadata_path):
             "id": mdjs["id"],
             "pub_date": datetime.datetime.strptime(
                 mdjs["upload_date"], "%Y%m%d"
-            ).strftime("%a, %d %b %Y %H:%M:%S +0000") if  mdjs.get("upload_date") is not None else None,
+            ).strftime("%a, %d %b %Y %H:%M:%S +0000")
+            if mdjs.get("upload_date") is not None
+            else None,
             "extension": extension,
             "description": mdjs.get("description"),
             "thumbnail": thumbnail_file,
             "filename": "%s.%s" % (basename, extension),
-            "duration": str(datetime.timedelta(seconds=mdjs["duration"])) if mdjs.get("duration") is not None else None,
+            "duration": str(datetime.timedelta(seconds=mdjs["duration"]))
+            if mdjs.get("duration") is not None
+            else None,
         }
 
 
@@ -120,8 +128,7 @@ def process_options(ydl_mod, sub):
     }
     if sub["retention_days"] is not None and not sub["initialize"]:
         options["daterange"] = ydl_mod.utils.DateRange(
-            (date.today() -
-             timedelta(days=sub["retention_days"])).strftime("%Y%m%d"),
+            (date.today() - timedelta(days=sub["retention_days"])).strftime("%Y%m%d"),
             "99991231",
         )
     if sub["download_last"] is not None and not sub["initialize"]:
@@ -233,7 +240,12 @@ def cleanup(sub):
 
 
 def write_xml(sub):
-    mds = [metadata_parse(md_file) for md_file in glob.glob(os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"]))]
+    mds = [
+        metadata_parse(md_file)
+        for md_file in glob.glob(
+            os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"])
+        )
+    ]
 
     tmpl_args = {
         "last_update": datetime.datetime.now(),
@@ -243,14 +255,23 @@ def write_xml(sub):
             {
                 "id": html.escape(md["id"]),
                 "title": html.escape(md["title"]),
-                "url": "/".join([sub["url_root"], quote(sub["name"]), quote(md["filename"])]),
-                "media_type": ("audio/%s" % md["extension"]) if sub["audio_only"] else "video/%s" % md["extension"],
+                "url": "/".join(
+                    [sub["url_root"], quote(sub["name"]), quote(md["filename"])]
+                ),
+                "media_type": ("audio/%s" % md["extension"])
+                if sub["audio_only"]
+                else "video/%s" % md["extension"],
                 "pubDate": md["pub_date"],
-                "thumbnail": "/".join([sub["url_root"], quote(sub["name"]), quote(md["thumbnail"])]) if md.get("thumbnail") is not None else None,
+                "thumbnail": "/".join(
+                    [sub["url_root"], quote(sub["name"]), quote(md["thumbnail"])]
+                )
+                if md.get("thumbnail") is not None
+                else None,
                 "description": md["description"],
                 "duration": md["duration"],
-            }   for md in mds
-        ]
+            }
+            for md in mds
+        ],
     }
 
     with open("%s.xml" % os.path.join(sub["output_dir"], sub["name"]), "w") as fout:
