@@ -1,3 +1,6 @@
+![Pypi Version Shield](https://img.shields.io/pypi/v/ydl-podcast.svg?style=flat-square)
+![Pypi License Shield](https://img.shields.io/pypi/l/ydl-podcast.svg?style=flat-square)
+
 # ydl-podcast
 
 A simple tool to generate Podcast-like RSS feeds from youtube (or other
