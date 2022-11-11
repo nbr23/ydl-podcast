@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "ydl-podcast"
+version = "1.0.0"
+description = "A simple tool to generate Podcast-like RSS feeds from youtube (or other youtube-dl supported services) channels, using youtube-dl"
+license = "MIT"
+authors = ["nbr23 <max@23.tf>"]
+homepage = "https://github.com/nbr23/ydl-podcast"
+repository = "https://github.com/nbr23/ydl-podcast"
+keywords = ["podcast", "youtube-dl"]
+readme = "README.md"
+
+packages = [
+    { include = "ydl_podcast" }
+]
+
+[tool.poetry.scripts]
+ydl-podcast = 'ydl_podcast.__main__:main'
+
+[tool.poetry.dependencies]
+python = "^3.9"
+youtube-dl = ">=2021.12.17"
+PyYAML = "6.0"
+Jinja2 = "^3.1.2"
+MarkupSafe = "^2.1.1"
+yt-dlp = { version = ">=2022.10.4", optional = true }
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.extras]
+yt-dlp = ["yt-dlp"]
+youtube-dl = ["youtube-dl"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

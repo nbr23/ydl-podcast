@@ -8,7 +8,13 @@ youtube-dl supported services) channels, using
 
 Install package with requirements:
 
-`pip install git+https://github.com/nbr23/ydl-podcast.git`
+### Youtube-dl:
+
+`pip install ydl-podcast[youtube-dl]`
+
+### yt-dlp:
+
+`pip install ydl-podcast[yt-dlp]`
 
 ## Configuration
 
