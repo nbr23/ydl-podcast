@@ -82,18 +82,18 @@ def metadata_parse(metadata_path):
 
 
 def get_metadata(ydl_mod, url, options, quiet=True):
-    options = options.copy()
-    options.update(
+    my_options = options.copy()
+    my_options.update(
         {
             "quiet": quiet,
             "simulate": True,
-            "forcejson": True,
             "ignoreerrors": True,
+            "dump_single_json": True,
             "extract_flat": "in_playlist",
         }
     )
     output = io.StringIO()
-    with ydl_mod.YoutubeDL(options) as ydl:
+    with ydl_mod.YoutubeDL(my_options) as ydl:
         try:
             if hasattr(ydl, "_out_files"):
                 ydl._out_files.out = output
@@ -109,11 +109,37 @@ def get_metadata(ydl_mod, url, options, quiet=True):
             if not quiet:
                 print(e)
 
-    metadata = [
-        json.loads(entry) for entry in output.getvalue().split("\n") if len(entry) > 0
-    ]
-    return metadata
+    return json.loads(output.getvalue())
 
+
+def get_video_metadata(ydl_mod, url, options, quiet=True):
+    my_options = options.copy()
+    my_options.update(
+        {
+        "quiet": quiet,
+        "simulate": True,
+        "forcejson": True,
+        "ignoreerrors": True,
+        "extract_flat": "in_playlist",
+        }
+    )
+    output = io.StringIO()
+    with ydl_mod.YoutubeDL(my_options) as ydl:
+        try:
+            if hasattr(ydl, "_out_files"):
+                ydl._out_files.out = output
+            else:
+                ydl._screen_file = output
+            if quiet:
+                if hasattr(ydl, "_out_files"):
+                    ydl._out_files.error = io.StringIO()
+                else:
+                    ydl._err_file = io.StringIO()
+            ydl.download([url])
+        except ydl_mod.utils.YoutubeDLError as e:
+            if not quiet:
+                print(e)
+    return json.loads(output.getvalue().split("\n")[0])
 
 def process_options(ydl_mod, sub):
     options = {
@@ -161,14 +187,15 @@ def download(ydl_mod, sub):
     downloaded = []
     options = process_options(ydl_mod, sub)
     metadata = get_metadata(ydl_mod, sub["url"], options, sub["quiet"])
-    if sub["download_last"] is not None and not sub.get("initialize", False):
-        metadata = metadata[: sub["download_last"]]
+    entries = metadata.get("entries", [])
 
-    for i, md in enumerate(metadata):
-        md_json = get_metadata(ydl_mod, md["url"], options, quiet=True)
-        if len(md_json) < 1:
-            continue
-        entry = md_json[0]
+    # Filter out older entries
+    if sub["download_last"] is not None and not sub.get("initialize", False):
+        entries = entries[: sub["download_last"]]
+
+    # Go through entries and download them
+    for i, md in enumerate(entries):
+        entry = get_video_metadata(ydl_mod, md["url"], options, quiet=True)
         mdfile_name = "%s.meta" % ".".join(entry["_filename"].split(".")[:-1])
         if not os.path.isfile(mdfile_name) and not entry.get("is_live", False):
             with ydl_mod.YoutubeDL(options) as ydl:
