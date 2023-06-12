@@ -9,6 +9,7 @@ import datetime
 from datetime import date, timedelta
 import importlib
 from jinja2 import Template
+from urllib.parse import urljoin
 
 from .template import ATOM_TMPL
 
@@ -182,12 +183,53 @@ def process_options(ydl_mod, sub):
 
     return options
 
+def get_podcast_icon(ydl_mod, sub, metadata, options):
+    # check if it already exists
+    icon_filepath = os.path.join(sub["output_dir"], sub["name"], "icon.jpg")
+    if os.path.isfile(icon_filepath):
+        return
+
+    # get the channel's about  metadata
+    channel_url = metadata.get("uploader_url")
+    if channel_url is None:
+        return
+    my_options = options.copy()
+    my_options.update(
+        {
+        "quiet": False,
+        "ignoreerrors": True,
+        "extract_flat": "in_playlist",
+        "writethumbnail": True,
+        "filename_template": "icon.jpg",
+        "outtmpl": os.path.join(
+            sub["output_dir"], sub["name"], 'icon.jpg'
+        ),
+        "writeinfojson": False,
+        }
+    )
+
+    output = io.StringIO()
+    with ydl_mod.YoutubeDL(my_options) as ydl:
+        try:
+            if hasattr(ydl, "_out_files"):
+                ydl._out_files.out = output
+                ydl._out_files.error = io.StringIO()
+            else:
+                ydl._screen_file = output
+                ydl._err_file = io.StringIO()
+            ydl.download(['/'.join([channel_url, 'about'])])
+        except ydl_mod.utils.YoutubeDLError:
+            pass
+
 
 def download(ydl_mod, sub):
     downloaded = []
     options = process_options(ydl_mod, sub)
     metadata = get_metadata(ydl_mod, sub["url"], options, sub["quiet"])
     entries = metadata.get("entries", [])
+
+    # Handle podcast icon
+    get_podcast_icon(ydl_mod, sub, metadata, options)
 
     # Filter out older entries
     if sub["download_last"] is not None and not sub.get("initialize", False):
@@ -300,6 +342,12 @@ def write_xml(sub):
             for md in mds
         ],
     }
+
+    icon_path = os.path.join(sub["output_dir"], sub["name"], 'icon.jpg')
+    if os.path.isfile(icon_path):
+        tmpl_args["icon_url"] = "/".join(
+            [sub["url_root"], quote(sub["name"]), quote('icon.jpg')]
+        )
 
     with open("%s.xml" % os.path.join(sub["output_dir"], sub["name"]), "w") as fout:
         fout.write(Template(ATOM_TMPL).render(**tmpl_args))

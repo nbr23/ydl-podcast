@@ -4,6 +4,10 @@ ATOM_TMPL = """<?xml version="1.0"?>
     <updated>{{ last_update }}</updated>
     <title>{{ channel_title }}</title>
     <link href="{{ channel_link }}" rel="self" type="application/rss+xml"/>
+    {% if icon_url != None %}
+    <itunes:image href="{{ icon_url }}"/>
+    {% endif %}
+
 
 {% for item in items %}
     <item>
