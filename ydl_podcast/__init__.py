@@ -42,6 +42,15 @@ def metadata_file_extension(metadata, data_path, basename):
         return metadata["acodec"]
     return metadata["ext"]
 
+def get_real_thumbnail_ext(metadata_path, default_ext):
+    path = os.path.dirname(metadata_path)
+    basename = ".".join(os.path.basename(metadata_path).split(".")[:-2])
+    extensions = [default_ext, "jpg", "jpeg", "png", "webp"]
+    for ext in extensions:
+        if os.path.isfile(os.path.join(path, "%s.%s" % (basename, ext))):
+            return ext
+    return default_ext
+
 
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
@@ -50,7 +59,7 @@ def metadata_parse(metadata_path):
         path = os.path.dirname(metadata_path)
         thumbnail_file = None
         if mdjs.get("thumbnail") is not None:
-            thumb_ext = mdjs["thumbnail"].split(".")[-1]
+            thumb_ext = get_real_thumbnail_ext(metadata_path, mdjs["thumbnail"].split(".")[-1])
             thumbnail_file = "%s.%s" % (basename, thumb_ext)
         extension = metadata_file_extension(mdjs, path, basename)
         if not os.path.isfile(os.path.join(path, "%s.%s" % (basename, extension))):
