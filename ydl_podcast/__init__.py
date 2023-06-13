@@ -183,7 +183,7 @@ def process_options(ydl_mod, sub):
 
     return options
 
-def get_podcast_icon(ydl_mod, sub, metadata, options):
+def get_podcast_icon(ydl_mod, sub, metadata):
     # check if it already exists
     icon_filepath = os.path.join(sub["output_dir"], sub["name"], "icon.jpg")
     if os.path.isfile(icon_filepath):
@@ -193,9 +193,7 @@ def get_podcast_icon(ydl_mod, sub, metadata, options):
     channel_url = metadata.get("uploader_url")
     if channel_url is None:
         return
-    my_options = options.copy()
-    my_options.update(
-        {
+    options =  {
         "quiet": False,
         "ignoreerrors": True,
         "extract_flat": "in_playlist",
@@ -205,11 +203,10 @@ def get_podcast_icon(ydl_mod, sub, metadata, options):
             sub["output_dir"], sub["name"], 'icon.jpg'
         ),
         "writeinfojson": False,
-        }
-    )
+    }
 
     output = io.StringIO()
-    with ydl_mod.YoutubeDL(my_options) as ydl:
+    with ydl_mod.YoutubeDL(options) as ydl:
         try:
             if hasattr(ydl, "_out_files"):
                 ydl._out_files.out = output
@@ -229,7 +226,7 @@ def download(ydl_mod, sub):
     entries = metadata.get("entries", [])
 
     # Handle podcast icon
-    get_podcast_icon(ydl_mod, sub, metadata, options)
+    get_podcast_icon(ydl_mod, sub, metadata)
 
     # Filter out older entries
     if sub["download_last"] is not None and not sub.get("initialize", False):
