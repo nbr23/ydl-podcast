@@ -1,5 +1,5 @@
-![Pypi Version Shield](https://img.shields.io/pypi/v/ydl-podcast.svg?style=flat-square)
-![Pypi License Shield](https://img.shields.io/pypi/l/ydl-podcast.svg?style=flat-square)
+[![Pypi Version Shield](https://img.shields.io/pypi/v/ydl-podcast.svg?style=flat-square)](https://pypi.org/project/ydl-podcast/)
+[![Pypi License Shield](https://img.shields.io/pypi/l/ydl-podcast.svg?style=flat-square)](https://pypi.org/project/ydl-podcast/)
 
 # ydl-podcast
 
