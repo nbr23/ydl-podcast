@@ -58,6 +58,7 @@ def convert_thumbnail_to_jpg(path, thumbnail_filename):
     if ext == "jpg" or ext == "jpeg":
         return thumbnail_filename
     try:
+        print("Converting thumbnail to jpg", thumbnail_filename)
         im = Image.open(os.path.join(path, thumbnail_filename))
         rgb_im = im.convert("RGB")
         new_thumbnail_filename = thumbnail_filename.replace("."+ext, ".jpg")
