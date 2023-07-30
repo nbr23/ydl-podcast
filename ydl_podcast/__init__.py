@@ -10,6 +10,7 @@ from datetime import date, timedelta
 import importlib
 from jinja2 import Template
 from urllib.parse import urljoin
+from PIL import Image
 
 from .template import ATOM_TMPL, SHOW_NFO_TMPL, EPISODE_NFO_TMPL
 
@@ -52,6 +53,21 @@ def get_real_thumbnail_ext(metadata_path, default_ext):
     return default_ext
 
 
+def convert_thumbnail_to_jpg(path, thumbnail_filename):
+    ext = thumbnail_filename.split(".")[-1]
+    if ext == "jpg" or ext == "jpeg":
+        return thumbnail_filename
+    try:
+        im = Image.open(os.path.join(path, thumbnail_filename))
+        rgb_im = im.convert("RGB")
+        new_thumbnail_filename = thumbnail_filename.replace("."+ext, ".jpg")
+        rgb_im.save(os.path.join(path, new_thumbnail_filename))
+        os.remove(os.path.join(path, thumbnail_filename))
+        return new_thumbnail_filename
+    except Exception as e:
+        print("Error converting thumbnail to jpg: %s" % e)
+        return thumbnail_filename
+
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
         mdjs = json.load(metadata)
@@ -60,7 +76,7 @@ def metadata_parse(metadata_path):
         thumbnail_file = None
         if mdjs.get("thumbnail") is not None:
             thumb_ext = get_real_thumbnail_ext(metadata_path, mdjs["thumbnail"].split(".")[-1])
-            thumbnail_file = "%s.%s" % (basename, thumb_ext)
+            thumbnail_file = convert_thumbnail_to_jpg(path, "%s.%s" % (basename, thumb_ext))
         extension = metadata_file_extension(mdjs, path, basename)
         if not os.path.isfile(os.path.join(path, "%s.%s" % (basename, extension))):
             with os.scandir(path) as directory:
