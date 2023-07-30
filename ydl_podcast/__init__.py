@@ -328,6 +328,8 @@ def cleanup(sub):
 def write_sub_nfo(sub):
     if not sub.get('nfo_files', False) or sub.get("audio_only", False):
         return
+    print("Writing NFO files for %s" % sub["name"])
+
     nso_file = os.path.join(sub["output_dir"], sub["name"], "tvshow.nfo")
     sub_nfo_tmpl = SHOW_NFO_TMPL
     episode_nfo_tmpl = EPISODE_NFO_TMPL
