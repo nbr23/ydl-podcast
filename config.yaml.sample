@@ -14,6 +14,7 @@ subscriptions:
     download_last: 1 # Only download the last video at each run
     ydl_options: # Add custom youtube-dl options
       writesubtitles: True # Write subtitle file
+    nfo_files: True # Generates .nfo files for each download and for the subscription
 
 output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/

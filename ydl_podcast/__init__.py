@@ -11,7 +11,7 @@ import importlib
 from jinja2 import Template
 from urllib.parse import urljoin
 
-from .template import ATOM_TMPL
+from .template import ATOM_TMPL, SHOW_NFO_TMPL, EPISODE_NFO_TMPL
 
 sub_defaults = {
     "retention_days": None,
@@ -323,6 +323,39 @@ def cleanup(sub):
             os.remove(fpath)
             deleted.append(fpath)
     return deleted
+
+
+def write_sub_nfo(sub):
+    if not sub.get('nfo_files', False) or sub.get("audio_only", False):
+        return
+    nso_file = os.path.join(sub["output_dir"], sub["name"], "tvshow.nfo")
+    sub_nfo_tmpl = SHOW_NFO_TMPL
+    episode_nfo_tmpl = EPISODE_NFO_TMPL
+
+    if not os.path.exists(nso_file):
+        with open(nso_file, "w+") as fout:
+            fout.write(Template(sub_nfo_tmpl).render({
+                "title": sub.get("pretty_name", sub["name"])
+            }))
+
+    mds = [
+        metadata_parse(md_file)
+        for md_file in glob.glob(
+            os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"])
+        )
+    ]
+
+    for md in mds:
+        nfo_file = os.path.join(sub["output_dir"], sub["name"], "%s.nfo" % ".".join(md["filename"].split(".")[:-1]))
+        ep_date = datetime.datetime.strptime(md["pub_date"], "%a, %d %b %Y %H:%M:%S +0000").strftime("%Y-%m-%d")
+        if not os.path.exists(nfo_file):
+            with open(nfo_file, "w+") as fout:
+                fout.write(Template(EPISODE_NFO_TMPL).render({
+                    "title": md["title"],
+                    "ep_date": ep_date,
+                    "show_title": sub.get("pretty_name", sub["name"]),
+                    "duration": md["duration"],
+                }))
 
 
 def write_xml(sub):

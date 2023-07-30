@@ -4,7 +4,7 @@ import os
 import sys
 from collections import ChainMap
 
-from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module
+from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module, write_sub_nfo
 
 
 def main():
@@ -58,6 +58,7 @@ def main():
         if sub["retention_days"] is not None and not sub["initialize"]:
             cleanup(sub)
 
+        write_sub_nfo(sub)
         write_xml(sub)
 
 

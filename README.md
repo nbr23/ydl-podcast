@@ -61,6 +61,7 @@ such as [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 - `best`: force best quality (only useful when specifying a format).
 - `ydl_options`: list of raw youtube-dl options to use. For experienced users,
   since this will likely yield issues if not understood.
+- `nfo_files`: generates nfo files for subscriptions and downloaded episodes (simulates a "tvshow" nfo for the subscription and "tvshow episode" for each video). This helps plex, kodi, jellyfin import correct metadata. Does NOT support `audio_only` feeds at this point.
 
 ## Usage
 
