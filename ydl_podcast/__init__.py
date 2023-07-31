@@ -400,11 +400,14 @@ def write_xml(sub):
                 if sub["audio_only"]
                 else "video/%s" % md["extension"],
                 "pubDate": md["pub_date"],
-                "thumbnail": "/".join(
-                    [sub["url_root"], quote(sub["name"]), quote(md["thumbnail"])]
-                )
-                if md.get("thumbnail") is not None
-                else None,
+                "thumbnail": "/".join([
+                    sub["url_root"],
+                    quote(sub["name"]),
+                    quote(convert_thumbnail_to_jpg(
+                        os.path.join(sub["url_root"], sub["name"]),
+                        md["thumbnail"]
+                    ))
+                ]) if md.get("thumbnail") is not None else None,
                 "description": md["description"],
                 "duration": md["duration"],
             }
