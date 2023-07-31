@@ -50,6 +50,30 @@ pipeline {
 				'''
 			}
 		}
+		stage('Prep buildx') {
+				steps {
+						script {
+								env.BUILDX_BUILDER = getBuildxBuilder();
+						}
+				}
+		}
+		stage('Build Docker image') {
+				steps {
+						withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+								sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p "$DOCKERHUB_CREDENTIALS_PSW"'
+						}
+						sh """
+								docker buildx build \
+										--pull \
+										--builder \$BUILDX_BUILDER \
+										--platform linux/amd64,linux/arm64 \
+										-t nbr23/ydl-podcast:latest \
+										-t nbr23/ydl-podcast:yt-dlp \
+										-t nbr23/ydl-podcast:${GIT_COMMIT}-`date +%s`-yt-dlp \
+										${ "$GIT_BRANCH" == "master" ? "--push" : ""} .
+								"""
+				}
+		}
 		stage('Sync github repo') {
 				when { branch 'master' }
 				steps {
