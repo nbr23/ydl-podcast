@@ -7,6 +7,8 @@ RUN pip install --upgrade --no-cache-dir pip \
 FROM python:alpine3.17
 ARG YTDL_MODULE=yt-dlp
 
+RUN apk add --no-cache ffmpeg tzdata mailcap
+
 COPY --from=wheels /out/wheels /wheels
 RUN pip install --upgrade --no-cache-dir pip \
     && pip install --no-cache-dir /wheels/* \
