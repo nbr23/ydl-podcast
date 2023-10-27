@@ -38,9 +38,9 @@ def load_config(config_path):
 
 def metadata_file_extension(metadata, data_path, basename):
     if "audio only" in metadata["format"] and os.path.isfile(
-        os.path.join(data_path, "%s.%s" % (basename, metadata["acodec"]))
+        os.path.join(data_path, "%s.%s" % (basename, metadata.get("acodec", metadata["audio_ext"])))
     ):
-        return metadata["acodec"]
+        return metadata.get("acodec", metadata["audio_ext"])
     return metadata["ext"]
 
 def get_real_thumbnail_ext(metadata_path, default_ext):
