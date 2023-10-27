@@ -267,6 +267,29 @@ def download(ydl_mod, sub):
     if sub["download_last"] is not None and not sub.get("initialize", False):
         entries = entries[: sub["download_last"]]
 
+    # Generic extractor should be handled differently
+    if metadata.get("_type") == "playlist" and metadata.get("extractor") == "generic":
+        with ydl_mod.YoutubeDL(options) as ydl:
+            if sub["quiet"]:
+                ydl._screen_file = io.StringIO()
+                if ydl._out_files is not None:
+                    ydl._out_files.out = io.StringIO()
+                    ydl._out_files.error = ydl._out_files.out
+                else:
+                    ydl._screen_file = io.StringIO()
+                    ydl._err_file = ydl._screen_file
+            if sub["quiet"]:
+                if ydl._out_files is not None:
+                    ydl._out_files.error = io.StringIO()
+                else:
+                    ydl._err_file = io.StringIO()
+            try:
+                ydl.download([sub["url"]])
+            except ydl_mod.utils.YoutubeDLError as e:
+                if not sub["quiet"]:
+                    print(e)
+        return {}
+
     # Go through entries and download them
     for i, md in enumerate(entries):
         entry = get_video_metadata(ydl_mod, md["url"], options, quiet=True)
