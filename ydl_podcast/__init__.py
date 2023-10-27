@@ -72,6 +72,8 @@ def convert_thumbnail_to_jpg(path, thumbnail_filename):
 def metadata_parse(metadata_path):
     with open(metadata_path) as metadata:
         mdjs = json.load(metadata)
+        if mdjs.get("_type") == "playlist":
+            return
         basename = ".".join(os.path.basename(metadata_path).split(".")[:-2])
         path = os.path.dirname(metadata_path)
         thumbnail_file = None
@@ -365,6 +367,8 @@ def write_sub_nfo(sub):
     ]
 
     for md in mds:
+        if md is None:
+            continue
         nfo_file = os.path.join(sub["output_dir"], sub["name"], "%s.nfo" % ".".join(md["filename"].split(".")[:-1]))
         ep_date = datetime.datetime.strptime(md["pub_date"], "%a, %d %b %Y %H:%M:%S +0000").strftime("%Y-%m-%d")
         if not os.path.exists(nfo_file):
@@ -411,7 +415,7 @@ def write_xml(sub):
                 "description": md["description"],
                 "duration": md["duration"],
             }
-            for md in mds
+            for md in mds if md
         ],
     }
 
