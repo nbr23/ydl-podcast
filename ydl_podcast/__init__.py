@@ -272,7 +272,7 @@ def download(ydl_mod, sub):
         entries = entries[: sub["download_last"]]
 
     # Generic extractor should be handled differently
-    if metadata.get("_type") == "playlist" and metadata.get("extractor") == "generic":
+    if metadata.get("_type") == "playlist" and (metadata.get("extractor") == "generic" or sub.get("download_as_playlist", False)):
         with ydl_mod.YoutubeDL(options) as ydl:
             if sub["quiet"]:
                 ydl._screen_file = io.StringIO()
