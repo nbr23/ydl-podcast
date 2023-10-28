@@ -74,6 +74,7 @@ def metadata_parse(metadata_path):
         mdjs = json.load(metadata)
         if mdjs.get("_type") == "playlist":
             return
+        print("Parsing metadata at ", metadata_path)
         basename = ".".join(os.path.basename(metadata_path).split(".")[:-2])
         path = os.path.dirname(metadata_path)
         thumbnail_file = None
