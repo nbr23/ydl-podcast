@@ -24,6 +24,19 @@ pipeline {
 				}
 			}
 		}
+		stage('Get package version') {
+			steps {
+				script {
+					PACKAGE_VERSION = sh (
+						script: """
+						cat pyproject.toml | grep "^version" | sed -e "s/^version = \\"\\([0-9]\\.[0-9]\\.[0-9]\\)\\"/\\1/g"
+						""",
+						returnStdout: true
+					).trim();
+					echo "Building v${PACKAGE_VERSION}"
+				}
+			}
+		}
 		stage('Build') {
 			steps {
 				sh '''
@@ -70,6 +83,7 @@ pipeline {
 										-t nbr23/ydl-podcast:latest \
 										-t nbr23/ydl-podcast:yt-dlp \
 										-t nbr23/ydl-podcast:${GIT_COMMIT}-`date +%s`-yt-dlp \
+										-t nbr23/ydl-podcast:v${PACKAGE_VERSION} \
 										${ "$GIT_BRANCH" == "master" ? "--push" : ""} .
 								"""
 				}

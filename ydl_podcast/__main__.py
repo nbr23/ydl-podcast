@@ -2,6 +2,7 @@
 
 import os
 import sys
+from importlib.metadata import version
 from collections import ChainMap
 
 from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module, write_sub_nfo
@@ -9,6 +10,9 @@ from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_m
 
 def main():
     argv = sys.argv
+    print(f"ydl-podcast v{version('ydl-podcast')}")
+    if '-v' in argv:
+        return 0
     config = load_config(argv[1] if len(argv) > 1 else "config.yaml")
     if not config:
         print("No valid configuration found.")
