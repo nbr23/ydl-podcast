@@ -37,11 +37,15 @@ def load_config(config_path):
 
 
 def metadata_file_extension(metadata, data_path, basename):
+    ext = None
     if "audio only" in metadata["format"] and os.path.isfile(
-        os.path.join(data_path, "%s.%s" % (basename, metadata.get("acodec", metadata["audio_ext"])))
+        os.path.join(data_path, "%s.%s" % (basename, metadata.get("acodec", metadata.get("audio_ext"))))
     ):
-        return metadata.get("acodec", metadata["audio_ext"])
-    return metadata["ext"]
+        ext = metadata.get("acodec", metadata.get("audio_ext"))
+    ext = metadata["ext"]
+    if ext is None:
+        raise Exception("No extension found")
+    return ext
 
 def get_real_thumbnail_ext(metadata_path, default_ext):
     path = os.path.dirname(metadata_path)
@@ -74,7 +78,6 @@ def metadata_parse(metadata_path):
         mdjs = json.load(metadata)
         if mdjs.get("_type") == "playlist":
             return
-        print("Parsing metadata at ", metadata_path)
         basename = ".".join(os.path.basename(metadata_path).split(".")[:-2])
         path = os.path.dirname(metadata_path)
         thumbnail_file = None
