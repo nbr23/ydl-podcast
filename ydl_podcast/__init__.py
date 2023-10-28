@@ -330,7 +330,7 @@ def download(ydl_mod, sub):
                             "subscription_name": sub["name"],
                             "formats": [
                                 fmt
-                                for fmt in entry.get("formats")
+                                for fmt in entry.get("formats", [])
                                 if (
                                     options.get("format") is None
                                     or (fmt.get("format") == options.get("format"))
