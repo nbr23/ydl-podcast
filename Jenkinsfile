@@ -99,8 +99,8 @@ pipeline {
 	post {
 		always {
 			sh "sudo rm -rf ./dist"
-			sh "docker buildx stop \$env.BUILDX_BUILDER || true"
-			sh "docker buildx rm \$env.BUILDX_BUILDER || true"
+			sh "docker buildx stop \$BUILDX_BUILDER || true"
+			sh "docker buildx rm \$BUILDX_BUILDER || true"
 		}
 	}
 }
