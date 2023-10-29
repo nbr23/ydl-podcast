@@ -44,9 +44,14 @@ def main():
             sub["ydl_options"] = {}
         if (
             "name" not in sub
-            or "url" not in sub
-            or "output_dir" not in sub
-            or "url_root" not in sub
+            or (
+                (
+                    "url" not in sub
+                    or "output_dir" not in sub
+                    or "url_root" not in sub
+                )
+                and not sub.get("skip_download", False)
+            )
         ):
             print("Skipping erroneous subscription")
             continue
@@ -57,7 +62,8 @@ def main():
         ):
             sub["initialize"] = False
 
-        download(ydl_mod, sub)
+        if not sub.get("skip_download", False):
+            download(ydl_mod, sub)
 
         if sub["retention_days"] is not None and not sub["initialize"]:
             cleanup(sub)
