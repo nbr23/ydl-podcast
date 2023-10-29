@@ -62,6 +62,8 @@ such as [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 - `ydl_options`: list of raw youtube-dl options to use. For experienced users,
   since this will likely yield issues if not understood.
 - `nfo_files`: generates nfo files for subscriptions and downloaded episodes (simulates a "tvshow" nfo for the subscription and "tvshow episode" for each video). This helps plex, kodi, jellyfin import correct metadata. Does NOT support `audio_only` feeds at this point.
+- `skip_download`: Don't perform download, just generate the Atom feed from the existing files. Mandatory `url` parameter can be skipped if `skip_download` is set to `true`
+- `download_as_playlist`: Pass the url to the downloader directly, without processing the metadata of each item in the playlist. This is helpful with generic urls, and a few specific extractors.
 
 ## Usage
 
