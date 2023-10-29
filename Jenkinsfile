@@ -29,7 +29,7 @@ pipeline {
 				script {
 					PACKAGE_VERSION = sh (
 						script: """
-						cat pyproject.toml | grep "^version" | sed -e "s/^version = \\"\\([0-9]\\.[0-9]\\.[0-9]\\)\\"/\\1/g"
+						cat pyproject.toml | grep "^version" | sed -e "s/^version = \\"\\([0-9.]\\+\\)\\"/\\1/g"
 						""",
 						returnStdout: true
 					).trim();
@@ -99,6 +99,8 @@ pipeline {
 	post {
 		always {
 			sh "sudo rm -rf ./dist"
+			sh "docker buildx stop \$env.BUILDX_BUILDER || true"
+			sh "docker buildx rm \$env.BUILDX_BUILDER || true"
 		}
 	}
 }
