@@ -4,17 +4,26 @@ import os
 import sys
 from importlib.metadata import version
 from collections import ChainMap
+import argparse
+import json
 
 from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module, write_sub_nfo
 
 
 def main():
-    argv = sys.argv
+    parser = argparse.ArgumentParser(description="ydl-podcast")
+    parser.add_argument("-v", "--version", help="Show version and exit", action='store_true')
+    parser.add_argument("-c", "--config", help="Configuration file", type=str, default="config.yaml")
+    parser.add_argument("-j", "--json-config", help="Configuration string in JSON format", type=str, default="{}")
     print(f"ydl-podcast v{version('ydl-podcast')}")
-    if '-v' in argv:
+    args = parser.parse_args()
+    if args.version:
         return 0
-    config = load_config(argv[1] if len(argv) > 1 else "config.yaml")
-    if not config:
+
+    config = load_config(args.config)
+    config = {**config, **json.loads(args.json_config)}
+
+    if config is None or len(config.keys()) == 0:
         print("No valid configuration found.")
         return -1
 
