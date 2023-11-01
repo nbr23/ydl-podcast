@@ -27,10 +27,10 @@ sub_defaults = {
 
 
 def load_config(config_path):
-    config = None
+    config = {}
     if not os.path.isfile(config_path):
         print("Config file '%s' not found." % config_path)
-        return None
+        return {}
     with open(config_path) as configfile:
         config = yaml.load(configfile, Loader=yaml.SafeLoader)
     return config
