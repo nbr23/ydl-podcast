@@ -457,6 +457,10 @@ def write_xml(sub):
 
 
 def get_ydl_module(config):
-    return importlib.import_module(
-        config.get("youtube-dl-module", "youtube_dl").replace("-", "_")
-    )
+    m = config.get("youtube-dl-module")
+    if m is None:
+        try:
+            return importlib.import_module("youtube_dl")
+        except ModuleNotFoundError:
+            return importlib.import_module("yt_dlp")
+    return importlib.import_module(m.replace("-", "_"))
