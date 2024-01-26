@@ -42,6 +42,8 @@ def metadata_file_extension(metadata, data_path, basename):
         os.path.join(data_path, "%s.%s" % (basename, metadata.get("acodec", metadata.get("audio_ext"))))
     ):
         ext = metadata.get("acodec", metadata.get("audio_ext"))
+    if ext is not None:
+        return ext
     ext = metadata["ext"]
     if ext is None:
         raise Exception("No extension found")
@@ -91,7 +93,7 @@ def metadata_parse(metadata_path):
                     ext = f.name.split(".")[-1]
                     if (
                         f.name.startswith(basename)
-                        and ext != "json"
+                        and ext not in ["json", "jpg", "webp", "meta"]
                         and (mdjs.get("thumbnail") is None or ext != thumb_ext)
                     ):
                         extension = ext
