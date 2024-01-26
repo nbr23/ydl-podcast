@@ -50,19 +50,6 @@ pipeline {
 				'''
 			}
 		}
-		stage('Publish pypi package') {
-			steps {
-				sh '''
-				# If we are within docker, we need to hack around to get the volume mount path on the host system for our docker runs down below
-				if docker inspect `hostname` 2>/dev/null; then
-					REAL_PWD=$(echo $PWD | sed "s|$AGENT_WORKDIR|$JENKINS_HOME_VOL_SRC|")
-				else
-					REAL_PWD=$PWD
-				fi
-				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install poetry && poetry publish -n -u __token__ -p $PYPI_TOKEN"
-				'''
-			}
-		}
 		stage('Prep buildx') {
 				steps {
 						script {
@@ -87,6 +74,19 @@ pipeline {
 										${ "$GIT_BRANCH" == "master" ? "--push" : ""} .
 								"""
 				}
+		}
+		stage('Publish pypi package') {
+			steps {
+				sh '''
+				# If we are within docker, we need to hack around to get the volume mount path on the host system for our docker runs down below
+				if docker inspect `hostname` 2>/dev/null; then
+					REAL_PWD=$(echo $PWD | sed "s|$AGENT_WORKDIR|$JENKINS_HOME_VOL_SRC|")
+				else
+					REAL_PWD=$PWD
+				fi
+				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install poetry && poetry publish -n -u __token__ -p $PYPI_TOKEN"
+				'''
+			}
 		}
 		stage('Sync github repo') {
 				when { branch 'master' }
