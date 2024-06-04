@@ -17,6 +17,8 @@ def main():
     parser.add_argument("-v", "--version", help="Show version and exit", action='store_true')
     parser.add_argument("-c", "--config", help="Configuration file", type=str, default="config.yaml")
     parser.add_argument("-j", "--json-config", help="Configuration string in JSON format", type=str, default="{}")
+    parser.add_argument("-f", "--filter", help="Filter subscriptions", type=str, default=None)
+    parser.add_argument("-e", "--exclude", help="Exclude subscriptions", type=str, default=None)
     print(f"ydl-podcast v{version('ydl-podcast')}")
     args = parser.parse_args()
     if args.version:
@@ -31,7 +33,14 @@ def main():
 
     ydl_mod = get_ydl_module(config)
 
+    if args.filter is not None:
+        args.filter = args.filter.split(",")
+    args.exclude = args.exclude.split(",") if args.exclude is not None else []
+
     for sub in config["subscriptions"]:
+        if args.filter is not None and sub["name"] not in args.filter or sub["name"] in args.exclude:
+            print("Skipping subscription", sub["name"])
+            continue
         sub = ChainMap(
             sub,
             {
