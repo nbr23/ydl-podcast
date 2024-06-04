@@ -43,3 +43,16 @@ EPISODE_NFO_TMPL = """<?xml version="1.0" encoding="utf-8" standalone="yes"?>
   <aired>{{ ep_date }}</aired>
 </episodedetails>
 """
+
+INDEX_HTML_TMPL = """
+<!DOCTYPE html>
+  <body>
+    <h1>Ydl-Podcast index</h1>
+    <ul>
+    {% for sub in subscriptions %}
+      <li><a href="{{ sub.name }}.xml">{{ sub.name }}</a></li>
+    {% endfor %}
+    </ul>
+  </body>
+<html>
+"""

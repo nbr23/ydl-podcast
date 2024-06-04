@@ -15,7 +15,9 @@ subscriptions:
     ydl_options: # Add custom youtube-dl options
       writesubtitles: True # Write subtitle file
     nfo_files: True # Generates .nfo files for each download and for the subscription
+    private: True # Exclude from index
 
 output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/
 youtube-dl-module: youtube-dl
+index_enabled: False # Create an index.html file indexing the subscriptions

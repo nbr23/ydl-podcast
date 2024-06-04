@@ -6,6 +6,8 @@ from importlib.metadata import version
 from collections import ChainMap
 import argparse
 import json
+from jinja2 import Template
+from ydl_podcast.template import INDEX_HTML_TMPL
 
 from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module, write_sub_nfo
 
@@ -79,6 +81,13 @@ def main():
 
         write_sub_nfo(sub)
         write_xml(sub)
+
+    if config.get("index_enabled", False):
+        with open(os.path.join(sub["output_dir"], "index.html"), "w") as fout:
+            print("Writing index.html")
+            fout.write(Template(INDEX_HTML_TMPL).render({
+                'subscriptions': [sub for sub in config["subscriptions"] if not sub.get("private", False)]
+                }))
 
 
 if __name__ == "__main__":
