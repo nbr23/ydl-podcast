@@ -83,8 +83,9 @@ def main():
         write_xml(sub)
 
     if config.get("index_enabled", False):
-        with open(os.path.join(sub["output_dir"], "index.html"), "w") as fout:
-            print("Writing index.html")
+        index_path = os.path.join(config["output_dir"], "index.html")
+        with open(index_path, "w") as fout:
+            print("Writing ", index_path)
             fout.write(Template(INDEX_HTML_TMPL).render({
                 'subscriptions': [sub for sub in config["subscriptions"] if not sub.get("private", False)]
                 }))
