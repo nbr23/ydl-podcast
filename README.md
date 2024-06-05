@@ -24,6 +24,8 @@ Install package with requirements:
 Edit the config.yaml file to list your podcast sources and configure them,
 as well as edit general configuration.
 
+[Example config file](config.sample.yaml)
+
 The available settings are the following.
 
 ### General settings
