@@ -46,6 +46,10 @@ EPISODE_NFO_TMPL = """<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
 INDEX_HTML_TMPL = """
 <!DOCTYPE html>
+<html manifest="" lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+  </head>
   <body>
     <h1>Ydl-Podcast index</h1>
     <ul>
