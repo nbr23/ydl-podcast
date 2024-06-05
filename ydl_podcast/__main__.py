@@ -13,7 +13,7 @@ from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_m
 
 
 def main():
-    parser = argparse.ArgumentParser(description="ydl-podcast")
+    parser = argparse.ArgumentParser(description="A simple tool to generate Podcast-like RSS feeds from youtube (or other youtube-dl supported services) channels, using youtube-dl/yt-dlp")
     parser.add_argument("-v", "--version", help="Show version and exit", action='store_true')
     parser.add_argument("-c", "--config", help="Configuration file", type=str, default="config.yaml")
     parser.add_argument("-j", "--json-config", help="Configuration string in JSON format", type=str, default="{}")

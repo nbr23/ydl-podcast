@@ -71,7 +71,7 @@ such as [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 Using cron or your favorite scheduler, run:
 
-`ydl_podcast [configfile.yaml]`
+`ydl-podcast [-c configfile.yaml]`
 
 You can then use your favorite web server to serve the files (a good idea is to
 exclude the `*.json` and `*.part` files from being served as the first might
@@ -84,4 +84,22 @@ root /var/www/static/podcasts/;
 location ~ (\.json$|\.part$) {
   return 403;
 }
+```
+
+### Command line arguments
+
+```bash
+usage: ydl-podcast [-h] [-v] [-c CONFIG] [-j JSON_CONFIG] [-f FILTER] [-e EXCLUDE]
+
+options:
+  -h, --help            show this help message and exit
+  -v, --version         Show version and exit
+  -c CONFIG, --config CONFIG
+                        Configuration file
+  -j JSON_CONFIG, --json-config JSON_CONFIG
+                        Configuration string in JSON format
+  -f FILTER, --filter FILTER
+                        Filter subscriptions
+  -e EXCLUDE, --exclude EXCLUDE
+                        Exclude subscriptions
 ```
