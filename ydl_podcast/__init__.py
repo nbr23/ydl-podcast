@@ -12,7 +12,9 @@ from jinja2 import Template
 from urllib.parse import urljoin
 from PIL import Image
 
-from .template import ATOM_TMPL, SHOW_NFO_TMPL, EPISODE_NFO_TMPL
+from .templates.episode_nfo import EPISODE_NFO_TMPL
+from .templates.show_nfo import SHOW_NFO_TMPL
+from .templates.feed import FEED_TMPL
 
 sub_defaults = {
     "retention_days": None,
@@ -455,7 +457,7 @@ def write_xml(sub):
         )
 
     with open("%s.xml" % os.path.join(sub["output_dir"], sub["name"]), "w") as fout:
-        fout.write(Template(ATOM_TMPL).render(**tmpl_args))
+        fout.write(Template(FEED_TMPL).render(**tmpl_args))
 
 
 def get_ydl_module(config):
