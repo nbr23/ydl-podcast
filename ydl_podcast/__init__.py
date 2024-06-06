@@ -2,7 +2,6 @@ import os
 import io
 import glob
 import yaml
-import html
 from urllib.parse import quote
 import json
 import datetime
@@ -429,8 +428,8 @@ def write_xml(sub):
         "channel_link": sub["url"],
         "items": [
             {
-                "id": html.escape(md["id"]),
-                "title": html.escape(md["title"]),
+                "id": md["id"],
+                "title": md["title"],
                 "url": "/".join(
                     [sub["url_root"], quote(sub["name"]), quote(md["filename"])]
                 ),
