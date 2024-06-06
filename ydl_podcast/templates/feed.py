@@ -3,8 +3,8 @@ FEED_TMPL = """<?xml version="1.0"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
   <channel>
     <updated>{{ last_update }}</updated>
-    <title>{{ channel_title }}</title>
-    <link href="{{ channel_link }}" rel="self" type="application/rss+xml"/>
+    <title><![CDATA[{{ channel_title }}]]></title>
+    <link><![CDATA[{{ channel_link }}]]></link>
     {% if icon_url %}
     <itunes:image href="{{ icon_url }}"/>
     {% endif %}
@@ -12,8 +12,8 @@ FEED_TMPL = """<?xml version="1.0"?>
 
 {% for item in items %}
     <item>
-      <id>{{ item.id }}</id>
-      <title>{{ item.title }}</title>
+      <id><![CDATA[{{ item.id }}]]></id>
+      <title><![CDATA[{{ item.title }}]]></title>
       <enclosure url="{{ item.url }}" type="{{ item.media_type }}"/>
       {% if item.pubDate != None %}<pubDate>{{ item.pubDate }}</pubDate>{% endif %}
       {% if item.thumbnail != None %}<itunes:image href="{{ item.thumbnail }}"/>{% endif %}
