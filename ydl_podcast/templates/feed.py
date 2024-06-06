@@ -60,6 +60,12 @@ body {
     font-size: 2em;
     margin: 0;
     color: #333;
+
+    a {
+        font-size: 0.5em;
+        margin-left: 10px;
+        text-decoration: none;
+    }
 }
 
 .item-list {
@@ -118,7 +124,15 @@ body {
               </xsl:attribute>
             </img>
           </xsl:if>
-          <h1 class="podcast-title"><xsl:value-of select="/rss/channel/title"/></h1>
+          <h1 class="podcast-title">
+            <xsl:value-of select="/rss/channel/title"/>
+            <a target="_blank">
+            <xsl:attribute name="href">
+              <xsl:value-of select="/rss/channel/link"/>
+            </xsl:attribute>
+            🔗
+            </a>
+          </h1>
         </div>
         <div class="item-list">
           <xsl:for-each select="/rss/channel/item">
