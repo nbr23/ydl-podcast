@@ -426,7 +426,7 @@ def write_xml(sub):
     tmpl_args = {
         "last_update": datetime.datetime.now(),
         "channel_title": sub["name"],
-        "channel_link": "/".join([sub["url_root"], "%s.xml" % sub["name"]]),
+        "channel_link": sub["url"],
         "items": [
             {
                 "id": html.escape(md["id"]),
