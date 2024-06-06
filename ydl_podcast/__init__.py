@@ -103,6 +103,9 @@ def metadata_parse(metadata_path):
         return {
             "title": mdjs["title"],
             "id": mdjs["id"],
+            "timestamp": datetime.datetime.strptime(
+                mdjs["upload_date"], "%Y%m%d"
+            ).timestamp(),
             "pub_date": datetime.datetime.strptime(
                 mdjs["upload_date"], "%Y%m%d"
             ).strftime("%a, %d %b %Y %H:%M:%S +0000")
@@ -435,6 +438,7 @@ def write_xml(sub):
                 if sub["audio_only"]
                 else "video/%s" % md["extension"],
                 "pubDate": md["pub_date"],
+                "timestamp": md["timestamp"],
                 "thumbnail": "/".join([
                     sub["url_root"],
                     quote(sub["name"]),
@@ -449,6 +453,7 @@ def write_xml(sub):
             for md in mds if md
         ],
     }
+    tmpl_args["items"].sort(key=lambda x: x["timestamp"], reverse=True)
 
     icon_path = os.path.join(sub["output_dir"], sub["name"], 'icon.jpg')
     if os.path.isfile(icon_path):
