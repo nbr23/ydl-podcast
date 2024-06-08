@@ -126,7 +126,7 @@ body {
           </xsl:if>
           <h1 class="podcast-title">
             <xsl:value-of select="/rss/channel/title"/>
-            <a target="_blank">
+            <a target="_blank" rel="noopener noreferrer">
             <xsl:attribute name="href">
               <xsl:value-of select="/rss/channel/link"/>
             </xsl:attribute>
@@ -142,7 +142,7 @@ body {
                 <xsl:value-of select="itunes:image/@href"/>
               </xsl:attribute>
             </img>
-            <a class="details">
+            <a class="details" target="_blank" rel="noopener noreferrer">
               <xsl:attribute name="href">
                 <xsl:value-of select="enclosure/@url"/>
               </xsl:attribute>
