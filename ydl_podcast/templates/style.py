@@ -12,9 +12,27 @@ FEED_STYLE_TMPL = """<?xml version="1.0"?>
           ydl-podcast | <xsl:value-of select="/rss/channel/title"/>
         </title>
         <style>
+.podcast-banner {
+    background-color: #ffc107;
+    color: #000;
+    text-align: center;
+    padding: 5px;
+    margin: 0;
+    border-bottom: 2px solid #e0a800;
+    border-radius: 0 0 10px 10px;
+    font-style: italic;
+    font-family: monospace, monospace;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
+    margin: 0;
+}
+
+.content {
     margin: 0;
     padding: 20px;
 }
@@ -93,43 +111,48 @@ body {
         </style>
       </head>
       <body>
-        <div class="podcast-header">
-          <xsl:if test="/rss/channel/itunes:image/@href">
-            <img class="podcast-thumbnail" style="display: block;">
-              <xsl:attribute name="src">
-                <xsl:value-of select="/rss/channel/itunes:image/@href"/>
-              </xsl:attribute>
-            </img>
-          </xsl:if>
-          <h1 class="podcast-title">
-            <xsl:value-of select="/rss/channel/title"/>
-            <a target="_blank" rel="noopener noreferrer">
-            <xsl:attribute name="href">
-              <xsl:value-of select="/rss/channel/link"/>
-            </xsl:attribute>
-            🔗
-            </a>
-          </h1>
+        <div class="podcast-banner">
+            This page is a Podcast Feed, add it to your podcast player!
         </div>
-        <div class="item-list">
-          <xsl:for-each select="/rss/channel/item">
-           <div class="item">
-            <img class="thumbnail">
-              <xsl:attribute name="src">
-                <xsl:value-of select="itunes:image/@href"/>
-              </xsl:attribute>
-            </img>
-            <a class="details" target="_blank" rel="noopener noreferrer">
+        <div class="content">
+          <div class="podcast-header">
+            <xsl:if test="/rss/channel/itunes:image/@href">
+              <img class="podcast-thumbnail" style="display: block;">
+                <xsl:attribute name="src">
+                  <xsl:value-of select="/rss/channel/itunes:image/@href"/>
+                </xsl:attribute>
+              </img>
+            </xsl:if>
+            <h1 class="podcast-title">
+              <xsl:value-of select="/rss/channel/title"/>
+              <a target="_blank" rel="noopener noreferrer">
               <xsl:attribute name="href">
-                <xsl:value-of select="enclosure/@url"/>
+                <xsl:value-of select="/rss/channel/link"/>
               </xsl:attribute>
-              <h3 class="title"><xsl:value-of select="title"/></h3>
-              <p class="description">
-                <xsl:value-of select="itunes:summary"/>
-              </p>
-            </a>
+              🔗
+              </a>
+            </h1>
           </div>
-          </xsl:for-each>
+          <div class="item-list">
+            <xsl:for-each select="/rss/channel/item">
+            <div class="item">
+              <img class="thumbnail">
+                <xsl:attribute name="src">
+                  <xsl:value-of select="itunes:image/@href"/>
+                </xsl:attribute>
+              </img>
+              <a class="details" target="_blank" rel="noopener noreferrer">
+                <xsl:attribute name="href">
+                  <xsl:value-of select="enclosure/@url"/>
+                </xsl:attribute>
+                <h3 class="title"><xsl:value-of select="title"/></h3>
+                <p class="description">
+                  <xsl:value-of select="itunes:summary"/>
+                </p>
+              </a>
+            </div>
+            </xsl:for-each>
+          </div>
         </div>
       </body>
     </html>
