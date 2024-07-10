@@ -108,6 +108,21 @@ body {
     margin: 0;
     color: #666;
 }
+
+.player {
+    display: flex;
+    justify-content: center;
+}
+
+.player video {
+    width: 90%;
+    height: auto;
+}
+
+.player audio {
+    width: 90%;
+    height: auto;
+}
         </style>
       </head>
       <body>
@@ -146,6 +161,28 @@ body {
                   <xsl:value-of select="enclosure/@url"/>
                 </xsl:attribute>
                 <h3 class="title"><xsl:value-of select="title"/></h3>
+                <p class="player">
+                  <xsl:choose>
+                    <xsl:when test="contains(enclosure/@type, 'audio/')">
+                        <audio controls="controls" preload="metadata">
+                            <source>
+                                <xsl:attribute name="src">
+                                    <xsl:value-of select="enclosure/@url"/>
+                                </xsl:attribute>
+                            </source>
+                        </audio>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <video controls="controls" preload="metadata">
+                            <source>
+                                <xsl:attribute name="src">
+                                    <xsl:value-of select="enclosure/@url"/>
+                                </xsl:attribute>
+                            </source>
+                        </video>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </p>
                 <p class="description">
                   <xsl:value-of select="itunes:summary"/>
                 </p>
