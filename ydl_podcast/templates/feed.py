@@ -1,5 +1,7 @@
 FEED_TMPL = """<?xml version="1.0"?>
+{% if style_rss_feed %}
 <?xml-stylesheet type="text/xsl" href="style.xsl"?>
+{% endif %}
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
   <channel>
     <updated>{{ last_update }}</updated>

@@ -40,9 +40,10 @@ def main():
     args.exclude = args.exclude.split(",") if args.exclude is not None else []
 
 
-    with open(os.path.join(config["output_dir"], "style.xsl"), "w") as fout:
-        print("Writing style.xsl")
-        fout.write(FEED_STYLE_TMPL)
+    if config.get("style_rss_feed", True):
+        with open(os.path.join(config["output_dir"], "style.xsl"), "w") as fout:
+            print("Writing style.xsl")
+            fout.write(FEED_STYLE_TMPL)
 
     for sub in config["subscriptions"]:
         if args.filter is not None and sub["name"] not in args.filter or sub["name"] in args.exclude:
@@ -96,7 +97,7 @@ def main():
             cleanup(sub)
 
         write_sub_nfo(sub)
-        write_xml(sub)
+        write_xml(config, sub)
 
     if config.get("index_enabled", False):
         index_path = os.path.join(config["output_dir"], "index.html")

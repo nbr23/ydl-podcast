@@ -414,7 +414,7 @@ def write_sub_nfo(sub):
                 }))
 
 
-def write_xml(sub):
+def write_xml(config, sub):
     mds = [
         metadata_parse(md_file)
         for md_file in glob.glob(
@@ -426,6 +426,7 @@ def write_xml(sub):
         "last_update": datetime.datetime.now(),
         "channel_title": sub["name"],
         "channel_link": sub["url"],
+        "style_rss_feed": config.get("style_rss_feed", True),
         "items": [
             {
                 "id": md["id"],

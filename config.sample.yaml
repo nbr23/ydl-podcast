@@ -21,3 +21,4 @@ output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/
 youtube-dl-module: youtube-dl
 index_enabled: False # Create an index.html file indexing the subscriptions
+style_rss_feed: True # Add XSLT Styling to RSS Feed
