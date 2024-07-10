@@ -169,6 +169,9 @@ body {
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="enclosure/@url"/>
                                 </xsl:attribute>
+                                <xsl:attribute name="type">
+                                    <xsl:value-of select="enclosure/@type"/>
+                                </xsl:attribute>
                             </source>
                         </audio>
                     </xsl:when>
@@ -177,6 +180,9 @@ body {
                             <source>
                                 <xsl:attribute name="src">
                                     <xsl:value-of select="enclosure/@url"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="type">
+                                    <xsl:value-of select="enclosure/@type"/>
                                 </xsl:attribute>
                             </source>
                         </video>
