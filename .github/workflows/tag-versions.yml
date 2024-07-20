@@ -1,0 +1,10 @@
+name: Tag pyproject bump
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  call-workflow:
+    uses: nbr23/github-workflows/.github/workflows/tag-pyproject-version-bump.yml@main
