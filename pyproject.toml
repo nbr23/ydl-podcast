@@ -19,7 +19,7 @@ ydl-podcast = 'ydl_podcast.__main__:main'
 [tool.poetry.dependencies]
 python = "^3.7"
 youtube-dl = ">=2021.12.17"
-PyYAML = "6.0.1"
+PyYAML = "6.0.2"
 Jinja2 = "^3.1.2"
 MarkupSafe = "^2.1.1"
 yt-dlp = { version = ">=2024.5.27", optional = true }
