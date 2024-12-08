@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ydl-podcast"
-version = "1.7.8"
+version = "1.7.9"
 description = "A simple tool to generate Podcast-like RSS feeds from youtube (or other youtube-dl supported services) channels, using youtube-dl/yt-dlp"
 license = "MIT"
 authors = ["nbr23 <max@23.tf>"]
@@ -22,7 +22,7 @@ youtube-dl = ">=2021.12.17"
 PyYAML = "6.0.2"
 Jinja2 = "^3.1.2"
 MarkupSafe = "^2.1.1"
-yt-dlp = { version = ">=2024.12.03", extras = ["default"], optional = true }
+yt-dlp = { version = ">=2024.12.06", extras = ["default"], optional = true }
 Pillow = "10.4.0"
 
 [tool.poetry.dev-dependencies]
