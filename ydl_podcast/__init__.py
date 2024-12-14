@@ -259,6 +259,12 @@ def get_podcast_icon(ydl_mod, sub, metadata):
         except ydl_mod.utils.YoutubeDLError:
             pass
 
+def flatten_entries(metadata, entries):
+    for entry in metadata.get("entries", []):
+        if entry.get("_type") == "playlist":
+            flatten_entries(entry, entries)
+        else:
+            entries.append(entry)
 
 def download(ydl_mod, sub):
     downloaded = []
@@ -268,7 +274,9 @@ def download(ydl_mod, sub):
     if metadata is None:
         print("No metadata found for %s" % sub["name"])
         return
-    entries = metadata.get("entries", [])
+
+    entries = []
+    flatten_entries(metadata, entries)
 
     # Handle podcast icon
     get_podcast_icon(ydl_mod, sub, metadata)
