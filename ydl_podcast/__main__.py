@@ -41,6 +41,9 @@ def main():
 
 
     if config.get("style_rss_feed", True):
+        if not os.path.exists(config["output_dir"]):
+            print("Creating output directory")
+            os.makedirs(config["output_dir"])
         with open(os.path.join(config["output_dir"], "style.xsl"), "w") as fout:
             print("Writing style.xsl")
             fout.write(FEED_STYLE_TMPL)
