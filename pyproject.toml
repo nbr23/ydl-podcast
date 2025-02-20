@@ -22,7 +22,7 @@ youtube-dl = ">=2021.12.17"
 PyYAML = "6.0.2"
 Jinja2 = "^3.1.2"
 MarkupSafe = "^2.1.1"
-yt-dlp = { version = ">=2025.01.26", extras = ["default"], optional = true }
+yt-dlp = { version = ">=2025.02.19", extras = ["default"], optional = true }
 Pillow = "10.4.0"
 
 [tool.poetry.dev-dependencies]
