@@ -435,7 +435,7 @@ def write_xml(config, sub):
             }
             for f in glob.glob(
                 os.path.join(sub["output_dir"], "%s/*.*" % sub["name"])
-            )
+            ) if os.path.basename(f).split('.')[-1] not in ["json", "jpg", "webp", "meta", "part", "ytdl"]
         ]
     else:
         mds = [
