@@ -423,7 +423,7 @@ def write_sub_nfo(sub):
 
 
 def write_xml(config, sub):
-    if sub.get("xml_include_files", 'all'):
+    if sub.get("xml_include_files") == 'all':
         mds = [
             {
                 "id": os.path.basename(f),
