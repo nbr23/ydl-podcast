@@ -423,17 +423,32 @@ def write_sub_nfo(sub):
 
 
 def write_xml(config, sub):
-    mds = [
-        metadata_parse(md_file)
-        for md_file in glob.glob(
-            os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"])
-        )
-    ]
+    if sub.get("xml_include_files", 'all'):
+        mds = [
+            {
+                "id": os.path.basename(f),
+                "title": '.'.join(os.path.basename(f).split('.')[:-1]),
+                "filename":  os.path.basename(f),
+                "extension": os.path.basename(f).split('.')[-1],
+                "pub_date": date.fromtimestamp(os.path.getmtime(f)),
+                "timestamp": date.fromtimestamp(os.path.getmtime(f)),
+            }
+            for f in glob.glob(
+                os.path.join(sub["output_dir"], "%s/*.*" % sub["name"])
+            )
+        ]
+    else:
+        mds = [
+            metadata_parse(md_file)
+            for md_file in glob.glob(
+                os.path.join(sub["output_dir"], "%s/*.info.json" % sub["name"])
+            )
+        ]
 
     tmpl_args = {
         "last_update": datetime.datetime.now(),
         "channel_title": sub["name"],
-        "channel_link": sub["url"],
+        "channel_link": sub.get("url", ""),
         "style_rss_feed": config.get("style_rss_feed", True),
         "items": [
             {
@@ -455,8 +470,8 @@ def write_xml(config, sub):
                         md["thumbnail"]
                     ))
                 ]) if md.get("thumbnail") is not None else None,
-                "description": md["description"],
-                "duration": md["duration"],
+                "description": md.get("description", None),
+                "duration": md.get("duration", None),
             }
             for md in mds if md
         ],
