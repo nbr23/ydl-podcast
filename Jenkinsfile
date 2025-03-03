@@ -46,7 +46,7 @@ pipeline {
 				else
 					REAL_PWD=$PWD
 				fi
-				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install poetry && poetry build"
+				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install uv && uv build"
 				'''
 			}
 		}
@@ -85,7 +85,7 @@ pipeline {
 				else
 					REAL_PWD=$PWD
 				fi
-				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install poetry && poetry publish -n -u __token__ -p $PYPI_TOKEN"
+				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install uv && uv build && uv publish --token $PYPI_TOKEN"
 				'''
 			}
 		}

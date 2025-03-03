@@ -1,36 +1,36 @@
-[tool.poetry]
+[project]
 name = "ydl-podcast"
 version = "1.9.2"
 description = "A simple tool to generate Podcast-like RSS feeds from youtube (or other youtube-dl supported services) channels, using youtube-dl/yt-dlp"
-license = "MIT"
-authors = ["nbr23 <max@23.tf>"]
-homepage = "https://github.com/nbr23/ydl-podcast"
-repository = "https://github.com/nbr23/ydl-podcast"
-keywords = ["podcast", "youtube-dl"]
+license = { text = "MIT" }
+authors = [
+    { name = "nbr23", email = "max@23.tf" }
+]
 readme = "README.md"
-
-packages = [
-    { include = "ydl_podcast" }
+requires-python = ">=3.7"
+keywords = ["podcast", "youtube-dl"]
+dependencies = [
+    "yt-dlp>=2025.02.19",
+    "PyYAML==6.0.2",
+    "Jinja2>=3.1.2",
+    "MarkupSafe>=2.1.1",
+    "Pillow==10.4.0",
 ]
 
-[tool.poetry.scripts]
-ydl-podcast = 'ydl_podcast.__main__:main'
-
-[tool.poetry.dependencies]
-python = "^3.7"
-youtube-dl = ">=2021.12.17"
-PyYAML = "6.0.2"
-Jinja2 = "^3.1.2"
-MarkupSafe = "^2.1.1"
-yt-dlp = { version = ">=2025.02.19", extras = ["default"], optional = true }
-Pillow = "10.4.0"
-
-[tool.poetry.dev-dependencies]
-
-[tool.poetry.extras]
-yt-dlp = ["yt-dlp"]
+[project.optional-dependencies]
+yt-dlp = ["yt-dlp>=2025.02.19"]
 youtube-dl = ["youtube-dl"]
 
+[project.urls]
+homepage = "https://github.com/nbr23/ydl-podcast"
+repository = "https://github.com/nbr23/ydl-podcast"
+
+[project.scripts]
+ydl-podcast = "ydl_podcast.__main__:main"
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ydl_podcast"]
