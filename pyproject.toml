@@ -1,13 +1,13 @@
 [project]
 name = "ydl-podcast"
-version = "1.9.3"
+version = "1.9.4"
 description = "A simple tool to generate Podcast-like RSS feeds from youtube (or other youtube-dl supported services) channels, using youtube-dl/yt-dlp"
 license = { text = "MIT" }
 authors = [
     { name = "nbr23", email = "max@23.tf" }
 ]
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 keywords = ["podcast", "youtube-dl"]
 dependencies = [
     "yt-dlp>=2025.02.19",
