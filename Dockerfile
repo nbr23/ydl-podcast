@@ -1,14 +1,12 @@
 FROM python:alpine3.17 as build
 ARG YTDL_MODULE=yt-dlp
 
-RUN apk add --no-cache g++
-
 COPY pyproject.toml .
 COPY ydl_podcast ydl_podcast
 COPY README.md .
 
-RUN pip install uv --break-system-packages && \
-    uv venv /usr/local/python-env && \
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
+RUN uv venv /usr/local/python-env && \
     source /usr/local/python-env/bin/activate && \
     uv pip install ".[${YTDL_MODULE}]"
 
