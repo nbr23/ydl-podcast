@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 keywords = ["podcast", "youtube-dl"]
 dependencies = [
-    "yt-dlp>=2025.6.9",
+    "yt-dlp>=2025.6.25",
     "PyYAML==6.0.2",
     "Jinja2>=3.1.2",
     "MarkupSafe>=2.1.1",
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-yt-dlp = ["yt-dlp>=2025.6.9"]
+yt-dlp = ["yt-dlp>=2025.6.25"]
 youtube-dl = ["youtube-dl"]
 
 [project.urls]
