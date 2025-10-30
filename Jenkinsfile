@@ -46,7 +46,7 @@ pipeline {
 				else
 					REAL_PWD=$PWD
 				fi
-				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install uv && uv build"
+				docker run --rm -v $REAL_PWD:/app -w /app ghcr.io/astral-sh/uv:python3.14-alpine uv build
 				'''
 			}
 		}
@@ -85,7 +85,7 @@ pipeline {
 				else
 					REAL_PWD=$PWD
 				fi
-				docker run --rm -v $REAL_PWD:/app -w /app python:3-slim-buster bash -c "pip install uv && uv build && uv publish --token $PYPI_TOKEN"
+				docker run --rm -v $REAL_PWD:/app -w /app ghcr.io/astral-sh/uv:python3.14-alpine sh -c "uv build && uv publish --token $PYPI_TOKEN"
 				'''
 			}
 		}
