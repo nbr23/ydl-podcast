@@ -1,8 +1,8 @@
-FROM python:alpine3.17 as build
+FROM python:alpine3.17 AS build
 ARG YTDL_MODULE=yt-dlp
 
 COPY pyproject.toml .
-COPY ydl_podcast ydl_podcast
+COPY src src
 COPY README.md .
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
