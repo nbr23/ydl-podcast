@@ -15,7 +15,7 @@ ARG YTDL_MODULE=yt-dlp
 ENV PYTHON_ENV="/usr/local/python-env"
 ENV PATH="$PYTHON_ENV/bin:$PATH"
 
-RUN apk add --no-cache ffmpeg tzdata mailcap
+RUN apk add --no-cache ffmpeg tzdata mailcap deno
 
 COPY --from=build /usr/local/python-env $PYTHON_ENV
 
