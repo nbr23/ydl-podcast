@@ -52,7 +52,7 @@ def main():
         if args.filter is not None and sub["name"] not in args.filter or sub["name"] in args.exclude:
             print("Skipping subscription", sub["name"])
             continue
-        sub = ChainMap(
+        sub = dict(ChainMap(
             sub,
             {
                 t: config[t]
@@ -61,7 +61,7 @@ def main():
                 in ["output_dir", "url_root", "best", "format", "filename_template"]
             },
             sub_defaults,
-        )
+        ))
         if (
             "ydl_options" in sub
             and sub["ydl_options"] is not None
