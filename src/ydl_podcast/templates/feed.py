@@ -7,6 +7,7 @@ FEED_TMPL = """<?xml version="1.0"?>
     <updated>{{ last_update }}</updated>
     <title><![CDATA[{{ channel_title }}]]></title>
     <link><![CDATA[{{ channel_link }}]]></link>
+    <description><![CDATA[{{ channel_description | default(channel_title, true) }}]]></description>
     {% if icon_url %}
     <itunes:image href="{{ icon_url }}"/>
     {% endif %}
@@ -14,7 +15,7 @@ FEED_TMPL = """<?xml version="1.0"?>
 
 {% for item in items %}
     <item>
-      <id><![CDATA[{{ item.id }}]]></id>
+      <guid isPermaLink="false"><![CDATA[{{ item.id }}]]></guid>
       <title><![CDATA[{{ item.title }}]]></title>
       <enclosure url="{{ item.url }}" type="{{ item.media_type }}"/>
       {% if item.pubDate != None %}<pubDate>{{ item.pubDate }}</pubDate>{% endif %}
