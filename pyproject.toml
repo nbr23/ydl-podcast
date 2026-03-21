@@ -27,6 +27,12 @@ repository = "https://github.com/nbr23/ydl-podcast"
 [project.scripts]
 ydl-podcast = "ydl_podcast.__main__:main"
 
+[dependency-groups]
+test = ["pytest>=8.0"]
+
+[tool.uv]
+environments = ["python_version >= '3.12'"]
+
 [build-system]
 requires = ["uv_build>=0.9.6,<0.10.0"]
 build-backend = "uv_build"
