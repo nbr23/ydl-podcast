@@ -86,8 +86,6 @@ class TestMetadataParse:
         result = metadata_parse(str(info_path))
         assert result["extension"] == "webm"
 
-    def test_missing_upload_date(self, make_info_json):
+    def test_missing_upload_date_returns_none(self, make_info_json):
         info_path = make_info_json(overrides={"upload_date": None})
-        result = metadata_parse(info_path)
-        assert result["timestamp"] is None
-        assert result["pub_date"] is None
+        assert metadata_parse(info_path) is None

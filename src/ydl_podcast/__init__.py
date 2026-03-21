@@ -80,6 +80,8 @@ def metadata_parse(metadata_path):
         mdjs = json.load(metadata)
         if mdjs.get("_type") == "playlist":
             return
+        if mdjs.get("upload_date") is None:
+            return
         basename = ".".join(os.path.basename(metadata_path).split(".")[:-2])
         path = os.path.dirname(metadata_path)
         thumbnail_file = None
@@ -103,9 +105,7 @@ def metadata_parse(metadata_path):
             "id": mdjs["id"],
             "timestamp": datetime.datetime.strptime(
                 mdjs["upload_date"], "%Y%m%d"
-            ).timestamp()
-            if mdjs.get("upload_date") is not None
-            else None,
+            ).timestamp(),
             "pub_date": datetime.datetime.strptime(
                 mdjs["upload_date"], "%Y%m%d"
             ).strftime("%a, %d %b %Y %H:%M:%S +0000")
