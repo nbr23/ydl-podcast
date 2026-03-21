@@ -10,7 +10,7 @@ from jinja2 import Template
 from ydl_podcast.templates.index import INDEX_HTML_TMPL
 from ydl_podcast.templates.style import FEED_STYLE_TMPL
 
-from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module, write_sub_nfo
+from . import load_config, write_xml, cleanup, download, sub_defaults, get_ydl_module, write_sub_nfo, sub_dir
 
 
 def main():
@@ -88,7 +88,7 @@ def main():
             continue
 
         if (
-            os.path.isdir(os.path.join(sub["output_dir"], sub["name"]))
+            os.path.isdir(sub_dir(sub))
             and sub["initialize"]
         ):
             sub["initialize"] = False
