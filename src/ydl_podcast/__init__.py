@@ -416,10 +416,7 @@ def write_xml(config, sub):
                 else "video/%s" % md["extension"],
                 "pubDate": md["pub_date"],
                 "timestamp": md["timestamp"],
-                "thumbnail": sub_url(sub, convert_thumbnail_to_jpg(
-                    os.path.join(sub["url_root"], sub["name"]),
-                    md["thumbnail"]
-                )) if md.get("thumbnail") is not None else None,
+                "thumbnail": sub_url(sub, md["thumbnail"]) if md.get("thumbnail") is not None else None,
                 "description": md.get("description", None),
                 "duration": md.get("duration", None),
             }
