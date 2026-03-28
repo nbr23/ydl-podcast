@@ -93,13 +93,15 @@ def convert_thumbnail_to_jpg(path, thumbnail_filename):
     ext = thumbnail_filename.split(".")[-1]
     if ext == "jpg" or ext == "jpeg":
         return thumbnail_filename
+    new_thumbnail_filename = thumbnail_filename.replace("." + ext, ".jpg")
+    if os.path.isfile(os.path.join(path, new_thumbnail_filename)):
+        return new_thumbnail_filename
     try:
         print("Converting thumbnail to jpg", thumbnail_filename)
-        new_thumbnail_filename = thumbnail_filename.replace("."+ext, ".jpg")
         with Image.open(os.path.join(path, thumbnail_filename)) as im:
             rgb_im = im.convert("RGB")
             rgb_im.save(os.path.join(path, new_thumbnail_filename))
-        return new_thumbnail_filename
+            return new_thumbnail_filename
     except Exception as e:
         print("Error converting thumbnail to jpg: %s" % e)
         return thumbnail_filename
