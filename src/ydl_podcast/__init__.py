@@ -82,7 +82,7 @@ def metadata_file_extension(metadata, data_path, basename):
 def get_real_thumbnail_ext(metadata_path, default_ext):
     path = os.path.dirname(metadata_path)
     basename = strip_info_json_ext(metadata_path)
-    extensions = [default_ext, "jpg", "jpeg", "png", "webp"]
+    extensions = ["jpg", "jpeg", default_ext, "png", "webp"]
     for ext in extensions:
         if os.path.isfile(os.path.join(path, "%s.%s" % (basename, ext))):
             return ext
