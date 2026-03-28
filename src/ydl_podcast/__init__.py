@@ -283,6 +283,12 @@ def download(ydl_mod, sub):
         return {}
 
     for i, md in enumerate(entries):
+        if glob.glob(sub_dir(sub, "*[%s]*.meta" % md["id"])):
+            if not sub["quiet"]:
+                print("Skipping already retrieved {} - {}".format(md["id"], md.get("title")))
+            if sub["download_last"] is not None and i >= sub["download_last"]:
+                break
+            continue
         entry = get_metadata(ydl_mod, md["url"], options, quiet=True, single_json=False)
         if entry is None:
             if not sub["quiet"]:
