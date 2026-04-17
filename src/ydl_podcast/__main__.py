@@ -58,7 +58,7 @@ def main():
                 t: config[t]
                 for t in config.keys()
                 if t
-                in ["output_dir", "url_root", "best", "format", "filename_template"]
+                in ["output_dir", "url_root", "best", "format", "filename_template", "new_feed_url_root"]
             },
             sub_defaults,
         ))

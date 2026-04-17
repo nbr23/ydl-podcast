@@ -439,6 +439,12 @@ def write_xml(config, sub):
     if os.path.isfile(icon_path):
         tmpl_args["icon_url"] = sub_url(sub, "icon.jpg")
 
+    new_feed_url = sub.get("new_feed_url")
+    if new_feed_url is None and sub.get("new_feed_url_root"):
+        new_feed_url = "/".join([sub["new_feed_url_root"].rstrip("/"), "%s.xml" % quote(sub["name"])])
+    if new_feed_url:
+        tmpl_args["new_feed_url"] = new_feed_url
+
     with open("%s.xml" % sub_dir(sub), "w") as fout:
         fout.write(Template(FEED_TMPL).render(**tmpl_args))
 

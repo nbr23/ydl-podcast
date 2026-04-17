@@ -8,6 +8,9 @@ FEED_TMPL = """<?xml version="1.0"?>
     <title><![CDATA[{{ channel_title }}]]></title>
     <link><![CDATA[{{ channel_link }}]]></link>
     <description><![CDATA[{{ channel_description | default(channel_title, true) }}]]></description>
+    {% if new_feed_url %}
+    <itunes:new-feed-url>{{ new_feed_url }}</itunes:new-feed-url>
+    {% endif %}
     {% if icon_url %}
     <itunes:image href="{{ icon_url }}"/>
     {% endif %}

@@ -19,6 +19,7 @@ subscriptions:
 
 output_dir: /var/www/html/podcast/
 url_root: https:///podcast.example.com/
+# new_feed_url_root: https://podcast.newdomain.com  # If set, emits <itunes:new-feed-url> as {new_feed_url_root}/{name}.xml per sub. Per-sub `new_feed_url` overrides with an explicit URL.
 youtube-dl-module: youtube-dl
 index_enabled: False # Create an index.html file indexing the subscriptions
 style_rss_feed: True # Add XSLT Styling to RSS Feed
