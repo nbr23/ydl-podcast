@@ -255,8 +255,7 @@ def _download_with_ydl(ydl_mod, options, url, quiet):
         try:
             ydl.download([url])
         except ydl_mod.utils.YoutubeDLError as e:
-            if not quiet:
-                print(e)
+            print("Download failed for %s: %s" % (url, e))
             return False
     return True
 
