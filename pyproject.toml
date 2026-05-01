@@ -34,5 +34,5 @@ test = ["pytest>=8.0"]
 environments = ["python_version >= '3.12'"]
 
 [build-system]
-requires = ["uv_build>=0.9.6,<0.10.0"]
+requires = ["uv_build>=0.9.6,<0.12.0"]
 build-backend = "uv_build"
