@@ -7,13 +7,13 @@ authors = [
     { name = "nbr23", email = "max@23.tf" }
 ]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 keywords = ["podcast", "youtube-dl"]
 dependencies = [
     "yt-dlp>=2026.10.21",
-    "PyYAML==6.0.2",
+    "PyYAML==6.0.3",
     "Jinja2>=3.1.2",
-    "Pillow==12.1.1",
+    "Pillow==13.0.0",
 ]
 
 [project.optional-dependencies]
