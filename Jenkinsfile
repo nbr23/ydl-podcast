@@ -105,7 +105,7 @@ pipeline {
 		stage('Sync github repo') {
 				when { branch 'master' }
 				steps {
-						syncRemoteBranch('git@github.com:nbr23/ydl-podcast.git', 'master')
+						ghSync()
 				}
 		}
 
