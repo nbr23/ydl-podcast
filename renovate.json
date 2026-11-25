@@ -3,7 +3,12 @@
   "packageRules": [
     {
       "matchPackageNames": ["yt-dlp"],
-      "rangeStrategy": "bump"
+      "rangeStrategy": "bump",
+      "postUpgradeTasks": {
+        "commands": ["uv version --bump minor --no-sync"],
+        "fileFilters": ["pyproject.toml", "uv.lock"],
+        "executionMode": "branch"
+      }
     }
   ]
 }
