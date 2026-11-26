@@ -1,4 +1,4 @@
-FROM python:alpine3.23 AS build
+FROM python:alpine3.24 AS build
 ARG YTDL_MODULE=yt-dlp
 
 COPY pyproject.toml .
@@ -10,7 +10,7 @@ RUN uv venv /usr/local/python-env && \
     source /usr/local/python-env/bin/activate && \
     uv pip install ".[${YTDL_MODULE}]"
 
-FROM python:alpine3.23
+FROM python:alpine3.24
 ARG YTDL_MODULE=yt-dlp
 ENV PYTHON_ENV="/usr/local/python-env"
 ENV PATH="$PYTHON_ENV/bin:$PATH"
