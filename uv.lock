@@ -315,9 +315,6 @@ dependencies = [
 youtube-dl = [
     { name = "youtube-dl" },
 ]
-yt-dlp = [
-    { name = "yt-dlp" },
-]
 
 [package.dev-dependencies]
 test = [
@@ -331,7 +328,6 @@ requires-dist = [
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "youtube-dl", marker = "extra == 'youtube-dl'" },
     { name = "yt-dlp", specifier = ">=2026.11.23" },
-    { name = "yt-dlp", marker = "extra == 'yt-dlp'", specifier = ">=2026.11.23" },
 ]
 provides-extras = ["yt-dlp", "youtube-dl"]
 

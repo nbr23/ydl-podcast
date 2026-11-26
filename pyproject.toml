@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-yt-dlp = ["yt-dlp>=2026.11.23"]
+yt-dlp = []
 youtube-dl = ["youtube-dl"]
 
 [project.urls]
