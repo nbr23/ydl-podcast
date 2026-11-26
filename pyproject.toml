@@ -11,8 +11,8 @@ requires-python = ">=3.11"
 keywords = ["podcast", "youtube-dl"]
 dependencies = [
     "yt-dlp>=2026.11.23",
-    "PyYAML==6.0.3",
-    "Jinja2>=3.1.2",
+    "PyYAML==6.0.4",
+    "Jinja2>=3.1.6",
     "Pillow==13.0.0",
 ]
 
@@ -28,11 +28,11 @@ repository = "https://github.com/nbr23/ydl-podcast"
 ydl-podcast = "ydl_podcast.__main__:main"
 
 [dependency-groups]
-test = ["pytest>=8.0"]
+test = ["pytest>=9.0"]
 
 [tool.uv]
 environments = ["python_version >= '3.12'"]
 
 [build-system]
-requires = ["uv_build>=0.9.6,<0.10.0"]
+requires = ["uv_build>=0.13.10,<0.14.0"]
 build-backend = "uv_build"
